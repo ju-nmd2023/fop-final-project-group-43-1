@@ -1,4 +1,5 @@
-///BACKGROUND///¨
+///BACKGROUND COLOR///¨
+background(173, 216, 230);
 
 //CLOUDS//
 //CLOUD 1//
@@ -11,6 +12,17 @@ ellipse(150,140,60,30);
 //CLOUD 2//
 stroke(255,255,255);
 fill(255,255,255);
-ellipse(330,130,50,30);
-ellipse(310,140,60,30);
-ellipse(350,140,60,30);
+ellipse(330,170,50,30);
+ellipse(310,180,60,30);
+ellipse(350,180,60,30);
+
+//CLOUD 3//
+stroke(255,255,255);
+fill(255,255,255);
+ellipse(380,40,50,30);
+ellipse(360,50,60,30);
+ellipse(400,50,60,30);
+
+
+
+
