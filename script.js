@@ -6,16 +6,41 @@ let velocityY=0;
 let gravity=0.1;
 let cloudsDrawn = false;
 let rotation=0;
+let platformPosX= 450;
+let platformPosY= 600;
+let canvasHeight= -1;
+let canvasWidth= -1;
 
 let cloud={
     X : 0,
     Y : 0,
-    ellipsesX : [],
+    ellipsesX : [],   
     ellipsesY : [],
     ellipsesW : [],
     ellipsesH : []
 };
 let clouds = [];
+
+function setup(){
+    createCanvas(900,800);
+    frameRate(30);
+    canvasHeight=800;
+    canvasWidth=900;
+
+}
+function drawPlatform(){
+    stroke(0,0,0);
+    fill(0,0,0);
+    rect(platformPosX,platformPosY,canvasWidth/8,canvasHeight/40);
+}
+function checkInput(){
+    if (keyIsDown(37)){
+        platformPosX--;
+    }
+    if (keyIsDown(39)){
+        platformPosX++;
+    }
+}
 
 function drawBackground(){
     ///BACKGROUND COLOR///¨
@@ -100,10 +125,11 @@ function drawBall(){
 
 function draw(){
     clear();
-
+    checkInput();
     drawBackground();
     ballMovement();
     drawBall();
+    drawPlatform();
 }
 
 //PADDLE//
