@@ -155,6 +155,30 @@ function platformMovement(){
 }
 //*****************************************************************
 
+// Ball Draw and Behaviour//
+
+function ballMovement(){
+    if(ballPositionY<canvasHeight){
+        if (force > 0.3){
+            force = force - 0.1;
+        }
+        else {
+            force = 0;
+        }
+        ballVelocityY = ballVelocityY + gravity - force;
+        if (ballVelocityY < -4){
+            ballVelocityY = -4;
+        }
+        if (ballVelocityY > 4){
+            ballVelocityY = 4;
+        }
+        if (abs(ballVelocityY) < 0.1){
+            ballVelocityY = 0;
+        }
+        ballPositionY= ballPositionY+ballVelocityY;
+    }
+}
+
 
 
 let cloud={
