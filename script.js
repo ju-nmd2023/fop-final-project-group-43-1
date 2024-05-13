@@ -61,6 +61,7 @@ function setup(){
 //************** */
 
 //BACKGROUND DRAW///
+
 function generateClouds(count){
     let clouds = [];
     for (let i=0;i<count;i++){
@@ -74,6 +75,27 @@ function generateClouds(count){
         if (i>0 && Math.abs(cloudY-clouds[i-1].y) < canvasWidth /(cloudCount+1) ){
             cloudY += canvasWidth /(cloudCount+4);
         }
+
+
+        //Create Random Ellipses for the Cloud
+        randomEllipses = [];
+        for(let j=0;j<cloudDetail;j++){
+            const ellipse = {
+                x: cloudX + Math.floor(Math.random() * canvasWidth /10),
+                y: cloudY + Math.floor(Math.random() * canvasWidth /15),
+                width: Math.random() * canvasWidth /10 + canvasWidth/10,
+                height: Math.random() * canvasWidth /20 + canvasWidth/15
+            };
+            
+            randomEllipses.push(ellipse);
+        }
+
+        cloud = new Cloud(cloudX,cloudY,randomEllipses);
+        clouds.push(cloud);
+        
+    }
+    return clouds;
+}
 
 
 let cloud={
