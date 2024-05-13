@@ -15,6 +15,16 @@ const Ball={
     rotation : 0
 };  
 
+//** Platform Properties *****
+const Platform = {
+    x : 0,
+    y : 0,
+    velocity : 0,
+    width : 0,
+    height : 0
+};
+platform = Platform;
+
 let cloud={
     X : 0,
     Y : 0,
