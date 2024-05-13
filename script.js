@@ -41,6 +41,39 @@ class Cloud{
 //*****************************
 
 
+//*****************************
+
+// Functions
+
+function setup(){
+    createCanvas(800,900);
+    frameRate(30);
+    canvasWidth = 800;
+    canvasHeight = 900;
+    platform.x = canvasWidth/2;
+    platform.y = canvasHeight/10*8;
+    platform.width = canvasWidth/6;
+    platform.height = canvasHeight/30;
+    ballPositionX = canvasWidth /2;
+    ballPositionY = canvasHeight/10;
+}
+
+//************** */
+
+//BACKGROUND DRAW///
+function generateClouds(count){
+    let clouds = [];
+    for (let i=0;i<count;i++){
+        
+        let cloudX = Math.floor(Math.random() * canvasWidth /cloudCount  * (i+1));
+        let cloudY = Math.floor(Math.random() * canvasWidth /6 + 30);
+
+        if (i>0 && Math.abs(cloudX-clouds[i-1].x) < canvasWidth /cloudCount){
+            cloudX += canvasWidth /(cloudCount+2);
+        }
+        if (i>0 && Math.abs(cloudY-clouds[i-1].y) < canvasWidth /(cloudCount+1) ){
+            cloudY += canvasWidth /(cloudCount+4);
+        }
 
 
 let cloud={
