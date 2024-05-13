@@ -25,6 +25,24 @@ const Platform = {
 };
 platform = Platform;
 
+//*** Clouds Properties ******
+let cloudsDrawn = false;
+let cloudCount = 3;
+let cloudDetail = 10;
+class Cloud{
+    constructor(x,y,ellipses){
+        this.x = x;
+        this.y = y;
+        this.ellipses = ellipses;
+    }
+}
+
+
+//*****************************
+
+
+
+
 let cloud={
     X : 0,
     Y : 0,
