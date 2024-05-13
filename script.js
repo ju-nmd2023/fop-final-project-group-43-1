@@ -179,6 +179,79 @@ function ballMovement(){
     }
 }
 
+function drawBall(){
+    stroke(255,0,0);
+    fill(255,0,0);
+    ballRotation=PI/50+ballRotation+ballVelocityY/20;
+    ballPositionY = ballPositionY + abs(ballVelocityY);
+    for(let i=0;i<6;i++){
+        startangle=i*PI/3;
+        if (i%2===0){
+            //stroke(255,0,0);
+            fill(255,0,0);    
+        }
+        else{
+            //stroke(255,255,255);
+            fill(255,255,255);
+        }
+        
+        arc(ballPositionX,ballPositionY,ballRadius,ballRadius,startangle+ballRotation,startangle+ballRotation+PI/3);
+    }
+}
+
+function ballCollisions(){
+    collision = false;
+    YinBounds = ballPositionY + ballRadius/2 >= platform.y && 
+                ballPositionY <= platform.y + platform.height;
+    text(force,200,100);
+    
+    if (YinBounds){
+        gravity = 0;
+        ballVelocityY = ballVelocityY * (-2) ;
+        text(ballVelocityY,300,100);
+        
+    }
+    else{
+        gravity = 0.1;
+    }
+}
+
+function draw(){
+    clear();
+
+    ball = Ball;
+    drawBackground();
+     drawPlatform();
+     ballCollisions();
+    
+    ballMovement();
+     drawBall();
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 let cloud={
