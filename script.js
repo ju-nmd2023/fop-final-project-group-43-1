@@ -97,6 +97,27 @@ function generateClouds(count){
     return clouds;
 }
 
+function drawBackground(){
+    ///BACKGROUND COLOR///¨
+    background(173, 216, 230);
+
+    //CLOUDS//
+  
+    if (cloudsDrawn === false){
+        
+        clouds = generateClouds(cloudCount);
+        cloudsDrawn = true;
+        console.log(clouds);
+    }
+    else{
+        for (let i=0;i<cloudCount;i++){
+            for (let j=0;j<cloudDetail;j++){
+                stroke(255,255,255);
+                fill(255,255,255);
+                ellipse(clouds[i].ellipses[j].x,clouds[i].ellipses[j].y,clouds[i].ellipses[j].width,clouds[i].ellipses[j].height);
+                
+            }
+
 
 let cloud={
     X : 0,
