@@ -1,15 +1,19 @@
 
 ///BACKGROUND COLOR///¨
-background(173, 216, 230);
-let y=150;
-let velocityY=0;
-let gravity=0.1;
-let cloudsDrawn = false;
-let rotation=0;
-let platformPosX= 450;
-let platformPosY= 600;
-let canvasHeight= -1;
-let canvasWidth= -1;
+ackground(173, 216, 230);
+let canvasWidth = 0;
+let canvasHeight = 0;
+
+//** Ball Properties *****
+const Ball={
+    x : 0,
+    y : 0,
+    radius : 30,
+    velocityX : 0,
+    velocityY : 0,
+    gravity : 0.1,
+    rotation : 0
+};  
 
 let cloud={
     X : 0,
