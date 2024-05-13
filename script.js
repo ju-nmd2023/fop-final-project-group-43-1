@@ -119,6 +119,44 @@ function drawBackground(){
             }
 
 
+
+            //************** Platform Movement and Draw ***********************
+function drawPlatform(){
+    platformMovement();
+    stroke(0,0,0);
+    fill(0,0,0);
+    rect(platform.x,platform.y,platform.y,platform.height);
+}
+
+function platformMovement(){
+    if (keyIsDown(37)){
+        platform.velocity = platform.velocity - platformBaseMovement/5;
+        platform.x = platform.x + platform.velocity;
+    }
+    if (keyIsDown(39)){
+        platform.velocity = platform.velocity + platformBaseMovement/5;
+        platform.x = platform.x + platform.velocity;
+        
+    }   
+    
+    //platform.x = platform.x + platform.velocity;
+    if (platform.velocity != 0){
+        if (abs(platform.velocity) < 0.5){
+            platform.velocity = 0;
+        }
+        if (platform.velocity > 0){
+            platform.velocity = platform.velocity - platform.velocity/10;
+        }
+        if (platform.velocity < 0){
+            platform.velocity = platform.velocity - platform.velocity/10;
+        }
+    }
+    platform.x = platform.x + platform.velocity;
+}
+//*****************************************************************
+
+
+
 let cloud={
     X : 0,
     Y : 0,
