@@ -1,9 +1,8 @@
 
 ///BACKGROUND COLOR///¨
-ackground(173, 216, 230);
+background(173, 216, 230);
 let canvasWidth = 0;
 let canvasHeight = 0;
-
 //** Ball Properties *****
 const Ball={
     x : 0,
@@ -13,7 +12,9 @@ const Ball={
     velocityY : 0,
     gravity : 0.1,
     rotation : 0
-};  
+};
+
+//************************
 
 //** Platform Properties *****
 const Platform = {
@@ -24,6 +25,7 @@ const Platform = {
     height : 0
 };
 platform = Platform;
+//****************************
 
 //*** Clouds Properties ******
 let cloudsDrawn = false;
@@ -37,19 +39,15 @@ class Cloud{
     }
 }
 
-
-//*****************************
-
-
 //*****************************
 
 // Functions
 
 function setup(){
-    createCanvas(800,900);
+    createCanvas(800,1000);
     frameRate(30);
     canvasWidth = 800;
-    canvasHeight = 900;
+    canvasHeight = 1000;
     platform.x = canvasWidth/2;
     platform.y = canvasHeight/10*8;
     platform.width = canvasWidth/6;
@@ -58,24 +56,21 @@ function setup(){
     ballPositionY = canvasHeight/10;
 }
 
-//************** */
-
-//BACKGROUND DRAW///
-
+//******** Background Draw ****************************************
 function generateClouds(count){
     let clouds = [];
     for (let i=0;i<count;i++){
         
-        let cloudX = Math.floor(Math.random() * canvasWidth /cloudCount  * (i+1));
+        let cloudX = Math.floor(Math.random() * canvasWidth /cloudCount);
         let cloudY = Math.floor(Math.random() * canvasWidth /6 + 30);
 
-        if (i>0 && Math.abs(cloudX-clouds[i-1].x) < canvasWidth /cloudCount){
-            cloudX += canvasWidth /(cloudCount+2);
+        cloudX += canvasWidth /(cloudCount+1) * i;
+        if (i>0 && Math.abs(cloudX-clouds[i-1].x) < canvasWidth /cloudCount + 100){
+            cloudX += canvasWidth /(cloudCount+1);
         }
         if (i>0 && Math.abs(cloudY-clouds[i-1].y) < canvasWidth /(cloudCount+1) ){
             cloudY += canvasWidth /(cloudCount+4);
         }
-
 
         //Create Random Ellipses for the Cloud
         randomEllipses = [];
@@ -118,9 +113,13 @@ function drawBackground(){
                 
             }
 
+        }  
+    }
+}
+// ***************************************************************************
 
 
-            //************** Platform Movement and Draw ***********************
+//************** Platform Movement and Draw ***********************
 function drawPlatform(){
     platformMovement();
     stroke(0,0,0);
@@ -155,8 +154,8 @@ function platformMovement(){
 }
 //*****************************************************************
 
-// Ball Draw and Behaviour//
 
+//******** Ball Draw and Behaviour *******************
 function ballMovement(){
     if(ballPositionY<canvasHeight){
         if (force > 0.3){
@@ -215,16 +214,26 @@ function ballCollisions(){
         gravity = 0.1;
     }
 }
+//*****************************************************************
 
 function draw(){
     clear();
 
     ball = Ball;
     drawBackground();
-     drawPlatform();
-     ballCollisions();
+    // drawPlatform();
+    // ballCollisions();
     
-    ballMovement();
-     drawBall();
+    // ballMovement();
+    // drawBall();
     
 }
+
+
+
+
+
+
+
+
+
