@@ -9,11 +9,12 @@ const Ball={
     y : 0,
     radius : 30,
     velocityX : 0,
-    velocityY : 0,
+    velocityY : 1,
     gravity : 0.1,
-    rotation : 0
+    rotation : 0,
+    bounced : false
 };
-
+ball = Ball;
 //************************
 
 //** Platform Properties *****
@@ -48,12 +49,14 @@ function setup(){
     frameRate(30);
     canvasWidth = 800;
     canvasHeight = 1000;
-    platform.x = canvasWidth/2;
-    platform.y = canvasHeight/10*8;
+    
     platform.width = canvasWidth/6;
     platform.height = canvasHeight/30;
-    ballPositionX = canvasWidth /2;
-    ballPositionY = canvasHeight/10;
+    platform.x = canvasWidth/2;
+    platform.y = canvasHeight/10*8;
+
+    ball.x = canvasWidth /2;
+    ball.y = canvasHeight/10;
 }
 
 //******** Background Draw ****************************************
@@ -135,12 +138,12 @@ function platformMovement(){
     if (keyIsDown(39)){
         platform.velocity = platform.velocity + 2;
         platform.x = platform.x + platform.velocity;
-
-    } 
+        
+    }   
     
     //platform.x = platform.x + platform.velocity;
     if (platform.velocity != 0){
-        if (abs(platform.velocity) < 0.5){
+        if (abs(platform.velocity) < ball.gravity/2){
             platform.velocity = 0;
         }
         if (platform.velocity > 0){
@@ -157,32 +160,16 @@ function platformMovement(){
 
 //******** Ball Draw and Behaviour *******************
 function ballMovement(){
-    if(ballPositionY<canvasHeight){
-        if (force > 0.3){
-            force = force - 0.1;
-        }
-        else {
-            force = 0;
-        }
-        ballVelocityY = ballVelocityY + gravity - force;
-        if (ballVelocityY < -4){
-            ballVelocityY = -4;
-        }
-        if (ballVelocityY > 4){
-            ballVelocityY = 4;
-        }
-        if (abs(ballVelocityY) < 0.1){
-            ballVelocityY = 0;
-        }
-        ballPositionY= ballPositionY+ballVelocityY;
-    }
+    
+    ball.velocityY = ball.velocityY + ball.gravity;
+    ball.y= ball.y+ball.velocityY;
 }
 
 function drawBall(){
     stroke(255,0,0);
     fill(255,0,0);
-    ballRotation=PI/50+ballRotation+ballVelocityY/20;
-    ballPositionY = ballPositionY + abs(ballVelocityY);
+    ball.rotation=PI/50+ball.rotation+ball.velocityY/20;
+    //ball.y = ball.y + abs(ball.velocityY);
     for(let i=0;i<6;i++){
         startangle=i*PI/3;
         if (i%2===0){
@@ -194,40 +181,61 @@ function drawBall(){
             fill(255,255,255);
         }
         
-        arc(ballPositionX,ballPositionY,ballRadius,ballRadius,startangle+ballRotation,startangle+ballRotation+PI/3);
+        arc(ball.x,ball.y,ball.radius,ball.radius,startangle+ball.rotation,startangle+ball.rotation+PI/3);
     }
 }
 
 function ballCollisions(){
     collision = false;
-    YinBounds = ballPositionY + ballRadius/2 >= platform.y && 
-                ballPositionY <= platform.y + platform.height;
-    text(force,200,100);
+    YinBounds = ball.y + ball.radius/2 >= platform.y - 10 && 
+                ball.y <= platform.y + platform.height -10;
+    text(ball.velocityY,200,100);
     
-    if (YinBounds){
-        gravity = 0;
-        ballVelocityY = ballVelocityY * (-2) ;
-        text(ballVelocityY,300,100);
+    if (YinBounds && ball.bounced === false){
+        //ball.gravity = 0;
+        
+        if (abs(ball.velocityY) > 3){
+            ball.velocityY = ball.velocityY * (-0.6) ;
+        }
+        text(ball.velocityY,300,100);
+        ball.bounced = true;
         
     }
     else{
-        gravity = 0.1;
+        ball.bounced = false;
     }
+
+
+    // if(ball.y<canvasHeight){
+    //     ball.y = canvasHeight;
+    //     ball.velocityY = ball.velocityY * (-0.6);
+    //     // if (ball.velocityY < -4){
+    //     //     ball.velocityY = -4;
+    //     // }
+    //     // if (ball.velocityY > 4){
+    //     //     ball.velocityY = 4;
+    //     // }
+    //     if (abs(ball.velocityY) < 0.1){
+    //         ball.velocityY = 0;
+    //     }
+        
+    // }
+    
 }
 //*****************************************************************
 
 function draw(){
     clear();
 
-    ball = Ball;
     drawBackground();
     drawPlatform();
-    // ballCollisions();
+    ballCollisions();
     
-    // ballMovement();
-    // drawBall();
+    ballMovement();
+    drawBall();
     
 }
+
 
 
 
