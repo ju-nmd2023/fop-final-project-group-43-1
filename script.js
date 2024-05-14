@@ -18,47 +18,68 @@ class Ball{
     }
     
     move(){
-        ball.velocityY = ball.velocityY + ball.gravity;
-        ball.y= ball.y+ball.velocityY;
+        this.velocityY = this.velocityY + this.gravity;
+        this.y= this.y+this.velocityY;
     }
 
-    collisions(){
-        let YinBounds = ball.y + ball.radius/2 >= platform.y && 
-                    ball.y <= platform.y + platform.height;
-        text(ball.velocityY,200,100);
+    collisions(platform){
+        let YinBounds = this.y + this.radius/2 >= platform.y && 
+                    this.y <= platform.y + platform.height;
+        text(this.velocityY,200,100);
         
-        if (YinBounds && ball.bounced === false){
-            //ball.gravity = 0;
+        if (YinBounds && this.bounced === false){
+            //this.gravity = 0;
             
-            if (abs(ball.velocityY) > 1){
-                ball.velocityY = ball.velocityY * (-0.5) ;
-            }
-            else{
-                ball.velocityY = ball.velocityY * (-1) ;
-            }
-            text(ball.velocityY,300,100);
-            ball.bounced = true;
+            
+            this.velocityY = this.velocityY * (-1.2);
+            
+            text(this.velocityY,300,100);
+            this.bounced = true;
             
         }
         else{
-            ball.bounced = false;
+            this.bounced = false;
         }
     
     
-        // if(ball.y<canvasHeight){
-        //     ball.y = canvasHeight;
-        //     ball.velocityY = ball.velocityY * (-0.6);
-        //     // if (ball.velocityY < -4){
-        //     //     ball.velocityY = -4;
-        //     // }
-        //     // if (ball.velocityY > 4){
-        //     //     ball.velocityY = 4;
-        //     // }
-        //     if (abs(ball.velocityY) < 0.1){
-        //         ball.velocityY = 0;
-        //     }
+        if(this.y>canvasHeight){
+            //this.y = canvasHeight;
+            //this.velocityY = this.velocityY * (-0.6);
+            // if (this.velocityY < -4){
+            //     this.velocityY = -4;
+            // }
+            // if (this.velocityY > 4){
+            //     this.velocityY = 4;
+            // }
             
-        // }
+            
+        }
+        else if (this.y < 0){
+            this.y = 0;
+            this.velocityY = this.velocityY * (-1);
+        }
+    }
+
+    drawBall(platform){
+        ball.collisions(platform);
+        ball.move();
+        stroke(255,0,0);
+        fill(255,0,0);
+        ball.rotation=PI/50+ball.rotation+ball.velocityY/20;
+        //ball.y = ball.y + abs(ball.velocityY);
+        for(let i=0;i<6;i++){
+            let startangle=i*PI/3;
+            if (i%2===0){
+                //stroke(255,0,0);
+                fill(255,0,0);    
+            }
+            else{
+                //stroke(255,255,255);
+                fill(255,255,255);
+            }
+            
+            arc(ball.x,ball.y,ball.radius,ball.radius,startangle+ball.rotation,startangle+ball.rotation+PI/3);
+        }
     }
 }
 let ball = new Ball(0,0);
@@ -66,14 +87,49 @@ let ball = new Ball(0,0);
 //************************
 
 //** Platform Properties *****
-const Platform = {
-    x : 0,
-    y : 0,
-    velocity : 0,
-    width : 0,
-    height : 0
-};
-platform = Platform;
+class Platform {
+    constructor(){
+        this.x = 0;
+        this.y = 0;
+        this.velocity = 0;
+        this.width = 0;
+        this.height = 0;
+    }
+
+    drawPlatform(){
+        this.platformMovement();
+        stroke(0,0,0);
+        fill(0,0,0);
+        rect(this.x,this.y,this.width,this.height);
+    }
+
+    platformMovement(){
+        if (keyIsDown(37)){
+            this.velocity = this.velocity - 2;
+            this.x = this.x + this.velocity;
+        }
+        if (keyIsDown(39)){
+            this.velocity = this.velocity + 2;
+            this.x = this.x + this.velocity;
+            
+        }   
+        
+        //this.x = this.x + this.velocity;
+        if (this.velocity != 0){
+            if (abs(this.velocity) < ball.gravity/2){
+                this.velocity = 0;
+            }
+            if (this.velocity > 0){
+                this.velocity = this.velocity - this.velocity/10;
+            }
+            if (this.velocity < 0){
+                this.velocity = this.velocity - this.velocity/10;
+            }
+        }
+        this.x = this.x + this.velocity;
+    }
+}
+let platform = new Platform();
 //****************************
 
 //*** Clouds Properties ******
@@ -175,85 +231,18 @@ function drawBackground(){
 // ***************************************************************************
 
 
-//************** Platform Movement and Draw ***********************
-function drawPlatform(){
-    platformMovement();
-    stroke(0,0,0);
-    fill(0,0,0);
-    rect(platform.x,platform.y,platform.width,platform.height);
-}
 
-function platformMovement(){
-    if (keyIsDown(37)){
-        platform.velocity = platform.velocity - 2;
-        platform.x = platform.x + platform.velocity;
-    }
-    if (keyIsDown(39)){
-        platform.velocity = platform.velocity + 2;
-        platform.x = platform.x + platform.velocity;
-        
-    }   
-    
-    //platform.x = platform.x + platform.velocity;
-    if (platform.velocity != 0){
-        if (abs(platform.velocity) < ball.gravity/2){
-            platform.velocity = 0;
-        }
-        if (platform.velocity > 0){
-            platform.velocity = platform.velocity - platform.velocity/10;
-        }
-        if (platform.velocity < 0){
-            platform.velocity = platform.velocity - platform.velocity/10;
-        }
-    }
-    platform.x = platform.x + platform.velocity;
-}
-//*****************************************************************
-
-
-//******** Ball Draw and Behaviour *******************
-function ballMovement(){
-    
-    
-}
-
-function drawBall(){
-    ball.collisions();
-    ball.move();
-    stroke(255,0,0);
-    fill(255,0,0);
-    ball.rotation=PI/50+ball.rotation+ball.velocityY/20;
-    //ball.y = ball.y + abs(ball.velocityY);
-    for(let i=0;i<6;i++){
-        startangle=i*PI/3;
-        if (i%2===0){
-            //stroke(255,0,0);
-            fill(255,0,0);    
-        }
-        else{
-            //stroke(255,255,255);
-            fill(255,255,255);
-        }
-        
-        arc(ball.x,ball.y,ball.radius,ball.radius,startangle+ball.rotation,startangle+ball.rotation+PI/3);
-    }
-}
-
-function ballCollisions(){
-    
-    
-}
 //*****************************************************************
 
 function draw(){
     clear();
 
     drawBackground();
-    drawPlatform();
-    ballCollisions();
+    platform.drawPlatform();
+    //ballCollisions();
     
     //ballMovement();
-    drawBall();
+    ball.drawBall(platform);
     
 }
 
