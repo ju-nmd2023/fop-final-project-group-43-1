@@ -31,7 +31,7 @@ class Ball{
             //this.gravity = 0;
             
             
-            this.velocityY = this.velocityY * (-1.2);
+            this.velocityY = this.velocityY * (-1.05);
             
 
             this.bounced = true;
