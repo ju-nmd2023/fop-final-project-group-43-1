@@ -3,18 +3,66 @@
 background(173, 216, 230);
 let canvasWidth = 0;
 let canvasHeight = 0;
+
 //** Ball Properties *****
-const Ball={
-    x : 0,
-    y : 0,
-    radius : 30,
-    velocityX : 0,
-    velocityY : 1,
-    gravity : 0.1,
-    rotation : 0,
-    bounced : false
-};
-ball = Ball;
+class Ball{
+    constructor(posX,posY){
+        this.x = posX;
+        this.y = posY;
+        this.radius = 30;
+        this.velocityX = 0;
+        this.velocityY = 1;
+        this.gravity = 0.1;
+        this.rotation = 0;
+        this.bounced = false;
+    }
+    
+    move(){
+        ball.velocityY = ball.velocityY + ball.gravity;
+        ball.y= ball.y+ball.velocityY;
+    }
+
+    collisions(){
+        let YinBounds = ball.y + ball.radius/2 >= platform.y && 
+                    ball.y <= platform.y + platform.height;
+        text(ball.velocityY,200,100);
+        
+        if (YinBounds && ball.bounced === false){
+            //ball.gravity = 0;
+            
+            if (abs(ball.velocityY) > 1){
+                ball.velocityY = ball.velocityY * (-0.5) ;
+            }
+            else{
+                ball.velocityY = ball.velocityY * (-1) ;
+            }
+            text(ball.velocityY,300,100);
+            ball.bounced = true;
+            
+        }
+        else{
+            ball.bounced = false;
+        }
+    
+    
+        // if(ball.y<canvasHeight){
+        //     ball.y = canvasHeight;
+        //     ball.velocityY = ball.velocityY * (-0.6);
+        //     // if (ball.velocityY < -4){
+        //     //     ball.velocityY = -4;
+        //     // }
+        //     // if (ball.velocityY > 4){
+        //     //     ball.velocityY = 4;
+        //     // }
+        //     if (abs(ball.velocityY) < 0.1){
+        //         ball.velocityY = 0;
+        //     }
+            
+        // }
+    }
+}
+let ball = new Ball(0,0);
+
 //************************
 
 //** Platform Properties *****
@@ -38,6 +86,16 @@ class Cloud{
         this.y = y;
         this.ellipses = ellipses;
     }
+
+    drawCloud(){
+        for (let j=0;j<cloudDetail;j++){
+            stroke(255,255,255);
+            fill(255,255,255);
+            ellipse(this.ellipses[j].x,this.ellipses[j].y,this.ellipses[j].width,this.ellipses[j].height);
+            
+        }
+    }
+
 }
 
 //*****************************
@@ -64,10 +122,10 @@ function generateClouds(count){
     let clouds = [];
     for (let i=0;i<count;i++){
         
-        let cloudX = Math.floor(Math.random() * canvasWidth /cloudCount);
+        let cloudX = Math.floor(Math.random() * canvasWidth /(cloudCount+1) );
         let cloudY = Math.floor(Math.random() * canvasWidth /6 + 30);
 
-        cloudX += canvasWidth /(cloudCount+1) * i;
+        cloudX += canvasWidth /(cloudCount) * i;
         if (i>0 && Math.abs(cloudX-clouds[i-1].x) < canvasWidth /cloudCount + 100){
             cloudX += canvasWidth /(cloudCount+1);
         }
@@ -97,7 +155,7 @@ function generateClouds(count){
 
 function drawBackground(){
     ///BACKGROUND COLOR///¨
-    background(173, 216, 230);
+    background(170, 215, 230);
 
     //CLOUDS//
   
@@ -109,12 +167,7 @@ function drawBackground(){
     }
     else{
         for (let i=0;i<cloudCount;i++){
-            for (let j=0;j<cloudDetail;j++){
-                stroke(255,255,255);
-                fill(255,255,255);
-                ellipse(clouds[i].ellipses[j].x,clouds[i].ellipses[j].y,clouds[i].ellipses[j].width,clouds[i].ellipses[j].height);
-                
-            }
+            clouds[i].drawCloud();
 
         }  
     }
@@ -161,11 +214,12 @@ function platformMovement(){
 //******** Ball Draw and Behaviour *******************
 function ballMovement(){
     
-    ball.velocityY = ball.velocityY + ball.gravity;
-    ball.y= ball.y+ball.velocityY;
+    
 }
 
 function drawBall(){
+    ball.collisions();
+    ball.move();
     stroke(255,0,0);
     fill(255,0,0);
     ball.rotation=PI/50+ball.rotation+ball.velocityY/20;
@@ -186,40 +240,7 @@ function drawBall(){
 }
 
 function ballCollisions(){
-    collision = false;
-    YinBounds = ball.y + ball.radius/2 >= platform.y - 10 && 
-                ball.y <= platform.y + platform.height -10;
-    text(ball.velocityY,200,100);
     
-    if (YinBounds && ball.bounced === false){
-        //ball.gravity = 0;
-        
-        if (abs(ball.velocityY) > 3){
-            ball.velocityY = ball.velocityY * (-0.6) ;
-        }
-        text(ball.velocityY,300,100);
-        ball.bounced = true;
-        
-    }
-    else{
-        ball.bounced = false;
-    }
-
-
-    // if(ball.y<canvasHeight){
-    //     ball.y = canvasHeight;
-    //     ball.velocityY = ball.velocityY * (-0.6);
-    //     // if (ball.velocityY < -4){
-    //     //     ball.velocityY = -4;
-    //     // }
-    //     // if (ball.velocityY > 4){
-    //     //     ball.velocityY = 4;
-    //     // }
-    //     if (abs(ball.velocityY) < 0.1){
-    //         ball.velocityY = 0;
-    //     }
-        
-    // }
     
 }
 //*****************************************************************
@@ -231,7 +252,7 @@ function draw(){
     drawPlatform();
     ballCollisions();
     
-    ballMovement();
+    //ballMovement();
     drawBall();
     
 }
