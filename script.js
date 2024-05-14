@@ -33,27 +33,23 @@ class Ball{
             
             this.velocityY = this.velocityY * (-1.2);
             
-            text(this.velocityY,300,100);
+
             this.bounced = true;
             
         }
-        else{
+        else if (YinBounds === false){
             this.bounced = false;
         }
     
-    
+        //if ball drops below canvas
         if(this.y>canvasHeight){
-            //this.y = canvasHeight;
-            //this.velocityY = this.velocityY * (-0.6);
-            // if (this.velocityY < -4){
-            //     this.velocityY = -4;
-            // }
-            // if (this.velocityY > 4){
-            //     this.velocityY = 4;
-            // }
-            
+            this.x = canvasWidth /2;
+            this.y = canvasHeight/10;
+            this.velocityY = 0;
+            //lose a life
             
         }
+        //if ball hits the ceiling
         else if (this.y < 0){
             this.y = 0;
             this.velocityY = this.velocityY * (-1);
