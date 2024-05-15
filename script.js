@@ -134,7 +134,7 @@ function platformMovement(){
         platform.x = platform.x + platform.velocity;
     }
     if (keyIsDown(39)){
-        platform.velocity = platform.velocity + platformBaseMovement/5;
+        platform.velocity = b platform.velocity + platformBaseMovement/5;
         platform.x = platform.x + platform.velocity;
         
     }   
@@ -154,7 +154,7 @@ function platformMovement(){
     platform.x = platform.x + platform.velocity;
 }
 //*****************************************************************
-
+  
 // Ball Draw and Behaviour//
 
 function ballMovement(){
