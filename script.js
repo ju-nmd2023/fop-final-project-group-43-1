@@ -25,21 +25,19 @@ class Ball{
     collisions(platform){
         let YinBounds = this.y + this.radius/2 >= platform.y && 
                     this.y <= platform.y + platform.height;
-        text(this.velocityY,200,100);
         
-        if (YinBounds && this.bounced === false){
-            //this.gravity = 0;
-            
-            
-            this.velocityY = this.velocityY * (-1.05);
-            
+        let XinBounds = this.x + this.radius/2 >= platform.x &&
+                    this.x <= platform.x + platform.width;
 
-            this.bounced = true;
+             
+        if (YinBounds && XinBounds){
+
             
+            this.y = platform.y - this.radius/2;
+            this.velocityY = this.velocityY * (-0.6);
+
         }
-        else if (YinBounds === false){
-            this.bounced = false;
-        }
+
     
         //if ball drops below canvas
         if(this.y>canvasHeight){
@@ -50,15 +48,16 @@ class Ball{
             
         }
         //if ball hits the ceiling
-        else if (this.y < 0){
-            this.y = 0;
+        else if (this.y < this.radius/2){
+            this.y = this.radius/2;
             this.velocityY = this.velocityY * (-1);
         }
     }
 
     drawBall(platform){
-        ball.collisions(platform);
         ball.move();
+        ball.collisions(platform);
+        
         stroke(255,0,0);
         fill(255,0,0);
         ball.rotation=PI/50+ball.rotation+ball.velocityY/20;
