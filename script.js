@@ -180,7 +180,7 @@ class Obstacle {
 
 
 //*** Clouds Properties ******
-let cloudsDrawn = false;
+let cloudsGenerated = false;
 let cloudCount = 4;
 let cloudDetail = 5;
 class Cloud{
@@ -201,14 +201,14 @@ class Cloud{
 
     }
 
+    //Animate the clouds moving to the right slowly
     animateCloud(){
-        //let polarity = Math.random() -0.5;
-        //let direction = polarity / abs(polarity);
-
-        //console.log(this.ellipses[0]);
+        
+        //For each ellipse in the cloud
         for (let i=0;i<cloudDetail;i++){
-            this.ellipses[i].x += canvasWidth/1000;
+            this.ellipses[i].x += canvasWidth/1000;     //Move the ellipse slightly to the right
             
+            //If the ellipse goes past the right border of the canvas, move it back to the left
             if (this.ellipses[i].x > canvasWidth + canvasWidth/cloudCount){
                 this.ellipses[i].x -= canvasWidth + canvasWidth/(cloudCount-1);
             }
@@ -236,14 +236,22 @@ function setup(){
 }
 
 //******** Background Draw ****************************************
+
+//Generate randomly shaped clouds. "count" is the count of clouds to be generated
+
 function generateClouds(count){
     let clouds = [];
+    
+    //For each cloud
     for (let i=0;i<count;i++){
         
+        //Set X and Y to approximately fill the width of the canvas with all the clouds
         let cloudX = Math.floor(Math.random() * canvasWidth /(cloudCount+1) );
         let cloudY = Math.floor(Math.random() * canvasWidth /6 + 30);
 
-        cloudX += canvasWidth /(cloudCount) * i;
+        cloudX += canvasWidth /(cloudCount) * i;    //Move the cloud to the right as many times as already created clouds
+        
+        //If current cloud is too close to previous cloud, increase distance
         if (i>0 && Math.abs(cloudX-clouds[i-1].x) < canvasWidth /cloudCount + 100){
             cloudX += canvasWidth /(cloudCount+1);
         }
@@ -254,17 +262,23 @@ function generateClouds(count){
         //Create Random Ellipses for the Cloud
         randomEllipses = [];
         for(let j=0;j<cloudDetail;j++){
+            
+            //Create ellipse objects
             const ellipse = {
+                //Random X and Y close to the Cloud's overall X and Y
                 x: cloudX + Math.floor(Math.random() * canvasWidth /10),
                 y: cloudY + Math.floor(Math.random() * canvasWidth /15),
+                //Random Width and Height based on the canvas size
                 width: Math.random() * canvasWidth /10 + canvasWidth/10,
                 height: Math.random() * canvasWidth /20 + canvasWidth/15
             };
-            
+            //Place the current ellipse into the array randomEllipses
             randomEllipses.push(ellipse);
         }
 
+        //Create a new Cloud and give it the X Y and Ellipses array
         cloud = new Cloud(cloudX,cloudY,randomEllipses);
+        //Place the current cloud in the clouds array
         clouds.push(cloud);
         
     }
@@ -277,13 +291,13 @@ function drawBackground(){
     background(170, 215, 230);
 
     //CLOUDS//
-  
-    if (cloudsDrawn === false){
+    //If Clouds are not yet generated, generate them
+    if (cloudsGenerated === false){
         
         clouds = generateClouds(cloudCount);
-        cloudsDrawn = true;
-        //console.log(clouds);
+        cloudsGenerated = true;
     }
+    //Else, clouds are already generated so draw them
     else{
         for (let i=0;i<cloudCount;i++){
             clouds[i].drawCloud();
