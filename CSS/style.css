@@ -1,6 +1,13 @@
+
+.jersey-25-charted-regular {
+    font-family: "Jersey 25 Charted", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
 #name {
     font-size: 24px;
-    color: blue;
+    color: red;
     text-align: center;
     margin-top: 20px;
 }
