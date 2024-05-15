@@ -18,27 +18,38 @@ class Ball{
     }
     
     move(){
+        if (abs(this.velocityY) > 40){
+            this.velocityY = this.velocityY/abs(this.velocityY) * 35;
+            fill(0,0,0);
+            text(this.velocityY,400,500);
+        }
         this.velocityY = this.velocityY + this.gravity;
+        
         this.y= this.y + this.velocityY;
-        console.log(this.velocityX);
+        //console.log(this.velocityX);
         this.x = this.x + this.velocityX;
+
+        
     }
 
     collisions(platform){
-        let YinBounds = this.y + this.radius/2 >= platform.y;
-                    
+
+        let ballEdgeBottom = this.y + this.radius/2;
+        let platformBottom = platform.y + platform.height;
+        let YinBounds = ballEdgeBottom >= platform.y;
+        let YwillBeInBounds = (ballEdgeBottom + this.velocityY >= platformBottom && this.y <= platform.y);
         
         let XinBounds = this.x + this.radius/2 >= platform.x &&
                     this.x <= platform.x + platform.width;
 
              
-        if (YinBounds && XinBounds){
+        if ((YinBounds || YwillBeInBounds) && XinBounds){
 
             
             this.y = platform.y - this.radius/2;
-            this.velocityY = this.velocityY * (-1.1);
+            this.velocityY = this.velocityY * (-1.5);
             let randomBounce = Math.random();
-            this.velocityX = platform.velocity * (0.2) + (this.velocityX + 0.5) * 0.8 * randomBounce - 0.5;
+            this.velocityX = platform.velocity * (0.6) + (this.velocityX + 1)  * (randomBounce - 0.5)/abs(randomBounce-0.5)*0.4;
 
         }
 
@@ -64,6 +75,7 @@ class Ball{
             this.x = canvasWidth - this.radius/2;
             this.velocityX = this.velocityX * (-1);
         }
+
     }
 
     drawBall(platform){
@@ -110,33 +122,45 @@ class Platform {
     }
 
     platformMovement(){
-        if (keyIsDown(37)){
+        if (keyIsDown(37) || keyIsDown(65)){
             this.velocity = this.velocity - 2;
             this.x = this.x + this.velocity;
         }
-        if (keyIsDown(39)){
+        if (keyIsDown(39) || keyIsDown(68)){
             this.velocity = this.velocity + 2;
             this.x = this.x + this.velocity;
             
-        }   
+        }
+
         
-        //this.x = this.x + this.velocity;
+        //Smooth down velocity when not pressing buttons
         if (this.velocity != 0){
-            if (abs(this.velocity) < ball.gravity/2){
+            if (abs(this.velocity) < 0.1){
                 this.velocity = 0;
             }
             if (this.velocity > 0){
-                this.velocity = this.velocity - this.velocity/10;
+                this.velocity = this.velocity - this.velocity/15;
             }
             if (this.velocity < 0){
-                this.velocity = this.velocity - this.velocity/10;
+                this.velocity = this.velocity - this.velocity/15;
             }
         }
         this.x = this.x + this.velocity;
+
+        //Check if platform collides with edges of canvas
+        if (this.x < 0){
+            this.x = 0;
+            this.velocity = 0;
+        }
+        if (this.x + this.width > canvasWidth){
+            this.x = canvasWidth - this.width;
+            this.velocity = 0;
+        }
     }
 }
 let platform = new Platform();
 //****************************
+
 
 //*** Clouds Properties ******
 let cloudsDrawn = false;
@@ -225,7 +249,7 @@ function drawBackground(){
         
         clouds = generateClouds(cloudCount);
         cloudsDrawn = true;
-        console.log(clouds);
+        //console.log(clouds);
     }
     else{
         for (let i=0;i<cloudCount;i++){
