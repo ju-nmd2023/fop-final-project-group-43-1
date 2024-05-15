@@ -11,20 +11,22 @@ class Ball{
         this.y = posY;
         this.radius = 30;
         this.velocityX = 0;
-        this.velocityY = 1;
-        this.gravity = 0.1;
+        this.velocityY = 0;
+        this.gravity = 0.2;
         this.rotation = 0;
         this.bounced = false;
     }
     
     move(){
         this.velocityY = this.velocityY + this.gravity;
-        this.y= this.y+this.velocityY;
+        this.y= this.y + this.velocityY;
+        console.log(this.velocityX);
+        this.x = this.x + this.velocityX;
     }
 
     collisions(platform){
-        let YinBounds = this.y + this.radius/2 >= platform.y && 
-                    this.y <= platform.y + platform.height;
+        let YinBounds = this.y + this.radius/2 >= platform.y;
+                    
         
         let XinBounds = this.x + this.radius/2 >= platform.x &&
                     this.x <= platform.x + platform.width;
@@ -34,7 +36,9 @@ class Ball{
 
             
             this.y = platform.y - this.radius/2;
-            this.velocityY = this.velocityY * (-0.6);
+            this.velocityY = this.velocityY * (-1.1);
+            let randomBounce = Math.random();
+            this.velocityX = platform.velocity * (0.2) + (this.velocityX + 0.5) * 0.8 * randomBounce - 0.5;
 
         }
 
@@ -52,6 +56,14 @@ class Ball{
             this.y = this.radius/2;
             this.velocityY = this.velocityY * (-1);
         }
+        else if (this.x < this.radius/2){
+            this.x = this.radius/2;
+            this.velocityX = this.velocityX *(-1);
+        }
+        else if (this.x > canvasWidth - this.radius/2){
+            this.x = canvasWidth - this.radius/2;
+            this.velocityX = this.velocityX * (-1);
+        }
     }
 
     drawBall(platform){
@@ -61,7 +73,6 @@ class Ball{
         stroke(255,0,0);
         fill(255,0,0);
         ball.rotation=PI/50+ball.rotation+ball.velocityY/20;
-        //ball.y = ball.y + abs(ball.velocityY);
         for(let i=0;i<6;i++){
             let startangle=i*PI/3;
             if (i%2===0){
@@ -238,7 +249,11 @@ function draw(){
     
     //ballMovement();
     ball.drawBall(platform);
-    
+    fill(0,0,0);
+    text(ball.velocityX, 200,300);
+    text(ball.velocityY,200,320);
+    text(ball.y,200,350);
+    text(ball.x,200,370);
 }
 
 
