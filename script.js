@@ -162,7 +162,21 @@ let platform = new Platform();
 //****************************
 
 //** Obstacles Properties *****
+class Obstacle {
+    constructor(posX,posY,width,height){
+        this.x = posX;
+        this.y = posY;
+        this.width = width;
+        this.height = height;
+        this.color = [Math.random() * 100 + 100,Math.random() * 100 + 100,Math.random() * 100 + 100];
+    }
 
+    drawObstacle(){
+        fill(this.color[0],this.color[1],this.color[2]);
+        rect(this.x,this.y,this.width,this.height);
+    }
+
+}
 
 
 //*** Clouds Properties ******
@@ -190,11 +204,11 @@ class Cloud{
     animateCloud(){
         //let polarity = Math.random() -0.5;
         //let direction = polarity / abs(polarity);
-        let rand = Math.random();
-        console.log(this.ellipses[0]);
+
+        //console.log(this.ellipses[0]);
         for (let i=0;i<cloudDetail;i++){
             this.ellipses[i].x += canvasWidth/1000;
-            this.ellipses[i].y += Math.cos(Math.sin(this.ellipses[i].x)*10) * 0.2;
+            
             if (this.ellipses[i].x > canvasWidth + canvasWidth/cloudCount){
                 this.ellipses[i].x -= canvasWidth + canvasWidth/(cloudCount-1);
             }
@@ -257,9 +271,7 @@ function generateClouds(count){
     return clouds;
 }
 
-function animateCloud(cloud){
 
-}
 function drawBackground(){
     ///BACKGROUND COLOR///¨
     background(170, 215, 230);
@@ -287,12 +299,9 @@ function drawBackground(){
 
 function draw(){
     clear();
-
+    
     drawBackground();
     platform.drawPlatform();
-    //ballCollisions();
-    
-    //ballMovement();
     ball.drawBall(platform);
     fill(0,0,0);
     text(ball.velocityX, 200,300);
