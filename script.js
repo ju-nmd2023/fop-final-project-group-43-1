@@ -253,16 +253,110 @@ function drawBackground(){
     }
     else{
         for (let i=0;i<cloudCount;i++){
-            clouds[i].drawCloud();
+            for (let j=0;j<cloudDetail;j++){
+                stroke(255,255,255);
+                fill(255,255,255);
+                ellipse(clouds[i].ellipses[j].x,clouds[i].ellipses[j].y,clouds[i].ellipses[j].width,clouds[i].ellipses[j].height);
+                
+            }
 
-        }  
+
+
+            //************** Platform Movement and Draw ***********************
+function drawPlatform(){
+    platformMovement();
+    stroke(0,0,0);
+    fill(0,0,0);
+    rect(platform.x,platform.y,platform.y,platform.height);
+}
+
+function platformMovement(){
+    if (keyIsDown(37)){
+        platform.velocity = platform.velocity - platformBaseMovement/5;
+        platform.x = platform.x + platform.velocity;
+    }
+    if (keyIsDown(39)){
+        platform.velocity = platform.velocity + platformBaseMovement/5;
+        platform.x = platform.x + platform.velocity;
+        
+    }   
+    
+    //platform.x = platform.x + platform.velocity;
+    if (platform.velocity != 0){
+        if (abs(platform.velocity) < 0.5){
+            platform.velocity = 0;
+        }
+        if (platform.velocity > 0){
+            platform.velocity = platform.velocity - platform.velocity/10;
+        }
+        if (platform.velocity < 0){
+            platform.velocity = platform.velocity - platform.velocity/10;
+        }
+    }
+    platform.x = platform.x + platform.velocity;
+}
+//*****************************************************************
+
+// Ball Draw and Behaviour//
+
+function ballMovement(){
+    if(ballPositionY<canvasHeight){
+        if (force > 0.3){
+            force = force - 0.1;
+        }
+        else {
+            force = 0;
+        }
+        ballVelocityY = ballVelocityY + gravity - force;
+        if (ballVelocityY < -4){
+            ballVelocityY = -4;
+        }
+        if (ballVelocityY > 4){
+            ballVelocityY = 4;
+        }
+        if (abs(ballVelocityY) < 0.1){
+            ballVelocityY = 0;
+        }
+        ballPositionY= ballPositionY+ballVelocityY;
     }
 }
-// ***************************************************************************
 
+function drawBall(){
+    stroke(255,0,0);
+    fill(255,0,0);
+    ballRotation=PI/50+ballRotation+ballVelocityY/20;
+    ballPositionY = ballPositionY + abs(ballVelocityY);
+    for(let i=0;i<6;i++){
+        startangle=i*PI/3;
+        if (i%2===0){
+            //stroke(255,0,0);
+            fill(255,0,0);    
+        }
+        else{
+            //stroke(255,255,255);
+            fill(255,255,255);
+        }
+        
+        arc(ballPositionX,ballPositionY,ballRadius,ballRadius,startangle+ballRotation,startangle+ballRotation+PI/3);
+    }
+}
 
-
-//*****************************************************************
+function ballCollisions(){
+    collision = false;
+    YinBounds = ballPositionY + ballRadius/2 >= platform.y && 
+                ballPositionY <= platform.y + platform.height;
+    text(force,200,100);
+    
+    if (YinBounds){
+        gravity = 0;
+        ballVelocityY = ballVelocityY * (-2) ;
+        text(ballVelocityY,300,100);
+        
+    }
+    else{
+        gravity = 0.1;
+    }
+}
 
 function draw(){
     clear();
