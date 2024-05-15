@@ -47,9 +47,9 @@ class Ball{
 
             
             this.y = platform.y - this.radius/2;
-            this.velocityY = this.velocityY * (-1.5);
+            this.velocityY = this.velocityY * (-1.05);
             let randomBounce = Math.random();
-            this.velocityX = platform.velocity * (0.6) + (this.velocityX + 1)  * (randomBounce - 0.5)/abs(randomBounce-0.5)*0.4;
+            this.velocityX = platform.velocity * (0.8) + (this.velocityX + 2)  * (randomBounce - 0.5)/abs(randomBounce-0.5)*0.2;
 
         }
 
@@ -161,11 +161,14 @@ class Platform {
 let platform = new Platform();
 //****************************
 
+//** Obstacles Properties *****
+
+
 
 //*** Clouds Properties ******
 let cloudsDrawn = false;
-let cloudCount = 3;
-let cloudDetail = 10;
+let cloudCount = 4;
+let cloudDetail = 5;
 class Cloud{
     constructor(x,y,ellipses){
         this.x = x;
@@ -174,14 +177,29 @@ class Cloud{
     }
 
     drawCloud(){
-        for (let j=0;j<cloudDetail;j++){
+        this.animateCloud();
+        for (let i=0;i<cloudDetail;i++){
             stroke(255,255,255);
             fill(255,255,255);
-            ellipse(this.ellipses[j].x,this.ellipses[j].y,this.ellipses[j].width,this.ellipses[j].height);
+            ellipse(this.ellipses[i].x,this.ellipses[i].y,this.ellipses[i].width,this.ellipses[i].height);
             
         }
+
     }
 
+    animateCloud(){
+        //let polarity = Math.random() -0.5;
+        //let direction = polarity / abs(polarity);
+        let rand = Math.random();
+        console.log(this.ellipses[0]);
+        for (let i=0;i<cloudDetail;i++){
+            this.ellipses[i].x += canvasWidth/1000;
+            this.ellipses[i].y += Math.cos(Math.sin(this.ellipses[i].x)*10) * 0.2;
+            if (this.ellipses[i].x > canvasWidth + canvasWidth/cloudCount){
+                this.ellipses[i].x -= canvasWidth + canvasWidth/(cloudCount-1);
+            }
+        }
+    }
 }
 
 //*****************************
@@ -239,6 +257,9 @@ function generateClouds(count){
     return clouds;
 }
 
+function animateCloud(cloud){
+
+}
 function drawBackground(){
     ///BACKGROUND COLOR///¨
     background(170, 215, 230);
@@ -254,7 +275,7 @@ function drawBackground(){
     else{
         for (let i=0;i<cloudCount;i++){
             clouds[i].drawCloud();
-
+            
         }  
     }
 }
