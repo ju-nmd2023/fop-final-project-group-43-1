@@ -1,5 +1,10 @@
+body { text-align: center; }
+        
+#gameCanvas { display: none; }
+        
+#endScreen { display: none; }
 
-.back{
+.mainContainer{
     width:100%;
     min-height: 100vh;
     background: linear-gradient(180deg,#9fe9ff,#dbffa0);

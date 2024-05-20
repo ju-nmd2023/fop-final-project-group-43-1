@@ -1,3 +1,20 @@
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+document.getElementById('startGameButton').addEventListener('click', function() {
+    // Hide the start button
+    this.style.display = 'none';
+    
+    // Show the game canvas
+    document.getElementById('container').style.display = 'none';
+    document.getElementById('gameCanvas').style.display = 'block';
+    
+    // Start the game
+    setup();
+    draw();
+  });
+
+
 
 ///BACKGROUND COLOR///¨
 background(173, 216, 230);
@@ -118,7 +135,7 @@ class Platform {
         this.platformMovement();
         stroke(0,0,0);
         fill(0,0,0);
-        rect(this.x,this.y,this.width,this.height);
+        ctx.rect(this.x,this.y,this.width,this.height);
     }
 
     platformMovement(){
@@ -221,7 +238,8 @@ class Cloud{
 // Functions
 
 function setup(){
-    createCanvas(800,1000);
+    
+    //createCanvas(800,1000);
     frameRate(30);
     canvasWidth = 800;
     canvasHeight = 1000;
@@ -301,8 +319,7 @@ function drawBackground(){
     else{
         for (let i=0;i<cloudCount;i++){
             clouds[i].drawCloud();
-            
-        }  
+        }
     }
 }
 // ***************************************************************************
@@ -317,7 +334,7 @@ function draw(){
     drawBackground();
     platform.drawPlatform();
     ball.drawBall(platform);
-    fill(0,0,0);
+    ctx.fill(0,0,0);
     text(ball.velocityX, 200,300);
     text(ball.velocityY,200,320);
     text(ball.y,200,350);

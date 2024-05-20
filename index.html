@@ -5,13 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bouncy Ball</title>
     <link rel="stylesheet" href="CSS/style.css">
+    <style>
+        body { text-align: center; }
+        #gameCanvas { display: none; }
+        #endScreen { display: none; }
+      </style>
 </head>
 <body>
-<div class="back">
-    <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
-    
-</div>
 
-    
+<div class="mainContainer">
+    <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
+    <button id="startGameButton">Start Game</button>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+
+<div id="endScreen">
+    <p>Game Over!</p>
+    <button id="restartBtn">Restart</button>
+  </div>
+
+</div>
 </body>
 </html>
