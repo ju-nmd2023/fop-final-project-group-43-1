@@ -1,13 +1,44 @@
+body { text-align: center; }
+        
+#gameCanvas { display: none; }
+        
+#endScreen { display: none; }
 
-.jersey-25-charted-regular {
-    font-family: "Jersey 25 Charted", sans-serif;
-    font-weight: 400;
-    font-style: normal;
+.mainContainer{
+    width:100%;
+    min-height: 100vh;
+    background: url(IMG/background);
+    padding: 10px;
 }
 
+
+
 #name {
-    font-size: 24px;
-    color: red;
+    font-size: 50px;
+    color: rgb(255, 180, 20);
     text-align: center;
     margin-top: 20px;
+}
+
+****CSS***
+.pacifico-regular {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+body {
+    overflow-x: hidden;
+}
+.main-width{
+    width: 1400px;
+    max-width: 95%;
+    margin: 0;
+}
+.hero{
+    height:100%;
+    width:100%;
+    min-height:100vh;
+    background: radial-gradient(#f9d349,20%,#d57e12);
+    position: relative;
 }

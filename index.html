@@ -7,6 +7,39 @@
     <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
-    <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
+
+    <sectionc class="hero">
+        <div class="main-width">
+          <header>
+            <div class="logo">
+              <h2><a href="#">GamerNutz</a></h2>
+            </div>
+    
+            <nav>
+              <ul>
+                <li class="active"><a href="#">Game</a></li>
+                <li><a href="#">Reviews</a></li>
+                <li><a href="#">Faq</a></li>
+                <li><a href="#">Chat</a></li>
+                <li class="btn"><a href="#">Download</a></li>
+              </ul>
+            </nav>
+          </header>
+        </div>
+      </section>
+
+
+<div class="mainContainer">
+    <h1 id="name" class="pacifico-regular">BOUNCY BOUNCY</h1>
+    <button id="startGameButton">Start Game</button>
+    <canvas id="gameCanvas" width="800" height="600" style="display: none;"></canvas>
+
+    <div id="endScreen" style="display: none;">
+        <p>Game Over!</p>
+        <button id="restartBtn">Restart</button>
+    </div>
+</div>
+
+<script src="script.js" defer></script>
 </body>
 </html>
