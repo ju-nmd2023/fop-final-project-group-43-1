@@ -571,8 +571,11 @@ function drawHeart(x, y, size) {
     endShape(CLOSE);
 }
 
-function checkBallLives()
-
+function checkBallLives() {
+    if (gameLevel.lives == 0) {
+        console.log("you lose");
+    }
+}
 
 
 
