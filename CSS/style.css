@@ -1,18 +1,19 @@
 body { text-align: center; }
         
-#gameCanvas { display: none; }
-        
 #endScreen { display: none; }
 
-.mainContainer{
+#mainContainer{
     width:100%;
     min-height: 100vh;
     background: linear-gradient(180deg,#9fe9ff,#dbffa0);
-    padding: 10px;
+    padding: 30px;
+    display: block;
+    border-radius: 100px;
+    margin: 10px;
 }
 
 
-.jersey-25-charted-regular {
+#jersey-25-charted-regular {
     font-family: "Jersey 25 Charted", sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -23,5 +24,81 @@ body { text-align: center; }
     color: rgb(255, 180, 20);
     text-align: center;
     margin-top: 20px;
+    text-shadow: 1px 1px 1px rgb(71, 10, 20);
 }
 
+#score {
+    font-size: 30px;
+    color: hsl(202, 100%, 22%);
+    margin-top: 20px;
+    margin-left: 20px;
+    text-align: left;
+    display: inline-block;
+}
+
+#scoreValue{
+    position: relative;
+    font-size: 50px;
+    top: 5px;
+    color: rgb(8, 129, 199);
+
+    margin-left: 20px;
+    text-align: left;
+    display: inline-block;
+    text-shadow: 1px 1px 1px rgb(71, 10, 20);
+}
+#lives {
+    font-size: 30px;
+    color: hsl(202, 100%, 22%);
+    margin-top: 20px;
+    margin-left: 100px;
+    text-align: left;
+    display: inline-block;
+}
+#livesCount {
+    position: relative;
+    top: 5px;
+    font-size: 50px;
+    color: rgb(35, 216, 35);
+
+    margin-left: 20px;
+    text-align: left;
+    display: inline-block;
+    text-shadow: 1px 1px 1px #3b3b06;
+}
+#startGameButton{
+    background-color: #04AA6D; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition:cubic-bezier();
+    transition-duration: 200ms;
+}
+
+#startGameButton:hover{
+    background-color: #09db68; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    transition:cubic-bezier();
+    transition-duration: 200ms;
+}
+
+#gameCanvas {
+    position: relative;
+    top: 50%;
+    width: 90%;
+    padding: 0;
+    border: 0cm;
+    margin: 0 auto;
+    background: linear-gradient(180deg,#9fe9ff,#dbffa0);
+    display: inline-block;
+  }

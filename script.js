@@ -1,10 +1,11 @@
 const MAX_VELOCITY = 30;
 const CLOUD_COUNT = 5;
 const CLOUD_DETAIL = 4;
-
-const canvas = document.getElementById('gameContainer');
-const score = document.getElementById('score');
-let canvasWidth;
+const SCORE_INCREMENT = 150;
+const canvas = document.getElementById('gameCanvas');
+const score = document.getElementById('scoreValue');
+const lives = document.getElementById('livesCount');
+let canvasWidth = canvas.clientWidth;
 let canvasHeight;
 let scoreValue = 0;
 
@@ -13,7 +14,7 @@ let scoreValue = 0;
 document.getElementById('startGameButton').addEventListener('click', function() {
     // Hide the start button
     this.style.display = 'none';
-    const mainContainer = document.getElementById('mainContainer');
+    const mainContainer = document.getElementById('gameCanvas');
     mainContainer.style.display = 'block';
 
     // Show the game canvas
@@ -27,42 +28,73 @@ document.getElementById('startGameButton').addEventListener('click', function() 
 
 const myp5 = p => {
     class GameLevel{
-        constructor(platform,balls,obstaclesCount, bckgndColor,p){
+        constructor(platform,ball,obstaclesCount, bckgndColor,p){
+            this.p = p;
             this.platform = platform;
-            this.balls = balls;
+            this.ball = ball;
             this.obstCount = obstaclesCount;
+            this.obstSpeed = 0;
             this.score = 0;
             this.lives = 3;
             this.obstacles = this.generateObstacles();
             this.background = new Background(bckgndColor,p);
             this.playing = true;
-            this.p = p;
+            this.level = 0;
         }
 
         update(){
-            score.innerText = 'Score: ' + this.score;
+            score.innerText = Math.floor(this.score);
+            lives.innerText = this.lives;
             if (this.playing){
-                for (let i=0; i< this.obstCount; i++){
-                    //this.obstacles[i].animate(2);
+                //Pass Levels based on Score:
+                if (this.level != Math.floor(this.score/1000)){
+                    this.level = Math.floor(this.score/1000);
+                    if (this.level <= 3){
+                        this.obstCount = this.level*2;
+                        this.obstacles = this.generateObstacles();
+                    }
+                }
+                
+                if (this.level >= 3){
+                    this.obstSpeed = Math.floor(this.score/800);
+                    for (let i=0; i< this.obstCount; i++){
+                        this.obstacles[i].animate(this.obstSpeed);
+                    }
                 }
                 this.platform.platformMovement();
-                for (let i=0; i<this.balls.length; i++){
-                    this.balls[i].collisions(this.platform,this.obstacles,this.score);
-                    this.balls[i].move();
+                
+                //Evaluation is a struct {ScoreChange,LivesCountChange}
+                let evaluation = this.ball.collisions(this.platform,this.obstacles);
+                
+                this.ball.move();
+                
+                this.score += evaluation.scoreChange;
+                this.lives += evaluation.livesChange;
+
+                if (this.lives == 0){
+                    this.gameOver = true;
+                    this.playing = false;
                 }
+
+                
             }
             
         }
 
         draw(){
+
+            this.background.color = this.p.color((2-this.lives)*30+100,200 - (3-this.lives)*50,230 - (3-this.lives)*70);
             this.background.draw();
             this.platform.drawPlatform();
-            for (let i=0; i<this.balls.length; i++){
-                this.balls[i].drawBall();
-            }
+            this.ball.drawBall();
+            
             for (let i=0; i<this.obstacles.length; i++){
                 this.obstacles[i].drawObstacle();
             }
+            this.p.noStroke();
+            this.p.fill(50,200,200);
+            this.p.textSize(50);
+            this.p.text("Level "+this.level,canvasWidth/100,canvasHeight/20);
         }
 
         generateObstacles() {
@@ -76,38 +108,20 @@ const myp5 = p => {
             let height;
             for (let i = 0; i < obstacleCount; i++) {
                 
-                let overlap;
-                do {
-                    overlap = false;
-                    // Define the obstacle's width and height with a random size
-                    width = Math.random() * (canvasWidth / 6) + 20; // Minimum width of 20
-                    height = Math.random() * (canvasHeight / 5) + 20; // Minimum height of 20
-        
-                    // Random position within the canvas bounds, accounting for the obstacle's size
-                    x = i*minDistance + Math.random() * (minDistance - width) ;
-                    y = Math.random() * (canvasHeight/3 - height );
-                    
-                    for (let i=0; i<this.balls.length; i++){
-                        if (this.balls[i].x - this.radius/2 >= x && this.balls[i].x + this.radius/2 <= x + width ||
-                             this.balls[i].y + this.radius/2 <= y){
-                                overlap = true;
-                            }
-                    }
-                    
-                    // Check if the new obstacle is too close to existing obstacles
-                    // for (let j = 0; j < obstacles.length; j++) {
-                    //     let other = obstacles[j];
-                    //     let dx = x - other.x;
-                    //     let dy = y - other.y;
-                    //     let distance = Math.sqrt(dx * dx + dy * dy);
-        
-                    //     if (distance < minDistance) {
-                    //         overlap = true; // Too close to another obstacle
-                    //         break;
-                    //     }
-                    // }
-                } while (overlap); // Keep trying until it's not overlapping
+                // Define the obstacle's width and height with a random size
+                width = Math.random() * (canvasWidth / 6) + canvasWidth / 16; // Minimum width of canvasWidth / 16
+                height = Math.random() * (canvasHeight / 5) + canvasHeight / 16; // Minimum height of canvasWidth / 16
+    
+                // Random position within the canvas bounds, accounting for the obstacle's size
+                x = i*minDistance + Math.random() * (minDistance - width) ;
+                y = Math.random() * (2* canvasHeight/3 - height );
                 
+                if (x <= this.ball.x){
+                    x = this.p.constrain(x,20,this.ball.x - this.ball.radius/2 - width)
+                }
+                else{
+                    x = this.p.constrain(x,this.ball.x + this.ball.radius/2 + width,canvasWidth);
+                }
                 let obstacle = new Obstacle(x,y,width,height,p);
                 console.log(obstacle);
                 // Add the non-overlapping obstacle to the array
@@ -152,7 +166,7 @@ const myp5 = p => {
                 
                 //Set X and Y to approximately this.p.fill the width of the canvas with all the clouds
                 let cloudX = Math.floor(Math.random() * canvasWidth /(CLOUD_COUNT+1) );
-                let cloudY = Math.floor(Math.random() * canvasWidth /6 + 30);
+                let cloudY = Math.floor(Math.random() * canvasWidth /4 + 30);
         
                 cloudX += canvasWidth /(CLOUD_COUNT) * i;    //Move the cloud to the right as many times as already created clouds
                 
@@ -196,7 +210,7 @@ const myp5 = p => {
         constructor(posX,posY,p){
             this.x = posX;
             this.y = posY;
-            this.radius = 30;
+            this.radius = canvasHeight/30;
             this.velocityX = 0;
             this.velocityY = 0;
             this.gravity = 0.2;
@@ -207,20 +221,22 @@ const myp5 = p => {
         
         move(){
             if (Math.abs(this.velocityY) > MAX_VELOCITY){
-                //If velocity exceeds 40 (or -40) then set it to 40 (or -40)
-                this.velocityY = this.velocityY / Math.abs(this.velocityY) * MAX_VELOCITY;
+                //If velocity exceeds 40 reduce it
+                const velocityReductionFactor = 0.95;
+                this.velocityY *= velocityReductionFactor;
             }
             this.velocityY = this.velocityY + this.gravity;
             
             this.y= this.y + this.velocityY;
-            this.x = this.x + this.velocityX;
+            this.x = this.x + this.velocityX ;
 
             
         }
 
-        collisions(platform,obstacles,scoreValue){
+        collisions(platform,obstacles){
             //******* Check for platform collision **********
-
+            let scoreChange = 0;
+            let livesChange = 0;
             let ballEdgeBottom = this.y + this.radius/2;
             let ballLeftEdge = this.x - this.radius/2;
             let ballRightEdge = this.x + this.radius/2;
@@ -248,7 +264,7 @@ const myp5 = p => {
             if (ballBottomHit && ballInPlatformWidth){
 
                 //Update level score
-                scoreValue += 10;
+                scoreChange += (this.velocityY + this.velocityX)/2 + SCORE_INCREMENT;
                 this.y = platform.y - this.radius/2;
                 this.velocityY = this.velocityY * (-1.05);
                 let randomBounce = Math.random() - 0.5; //Effectively gives a number between -0.5 and 0.5
@@ -264,8 +280,8 @@ const myp5 = p => {
                 let collisionInfo = this.calculateCollisionPointAndNormal(obstacles[i]);
                 if (collisionInfo != null){
                     this.adjustTrajectory(collisionInfo.normal.x,collisionInfo.normal.y);
-                    this.x = collisionInfo.collisionPoint.x + (this.radius/2 +5) * collisionInfo.normal.x;
-                    this.y = collisionInfo.collisionPoint.y + (this.radius/2 +5) * collisionInfo.normal.y;
+                    //this.x = collisionInfo.collisionPoint.x + (this.radius/2 +5) * collisionInfo.normal.x;
+                    //this.y = collisionInfo.collisionPoint.y + (this.radius/2 +5) * collisionInfo.normal.y;
                 }
 
             }
@@ -275,7 +291,7 @@ const myp5 = p => {
                 this.x = canvasWidth /2;
                 this.y = canvasHeight/10;
                 this.velocityY = 0;
-                //lose a life
+                livesChange--;
                 
             }
             //if ball hits the ceiling
@@ -293,7 +309,7 @@ const myp5 = p => {
             }
 
             //Return updated scoreValue;
-            return scoreValue
+            return {scoreChange,livesChange}
 
         }
 
@@ -308,46 +324,46 @@ const myp5 = p => {
         }
 
         calculateCollisionPointAndNormal(obstacle) {
-            // Find the closest point on the obstacle to the ball's center
+    // Find the closest point on the obstacle to the ball's center
 
-            let closestX = this.p.constrain(this.x, obstacle.x, obstacle.x + obstacle.width);
-            let closestY = this.p.constrain(this.y, obstacle.y, obstacle.y + obstacle.height);
+    let closestX = this.p.constrain(this.x, obstacle.x, obstacle.x + obstacle.width);
+    let closestY = this.p.constrain(this.y, obstacle.y, obstacle.y + obstacle.height);
 
-            // Calculate the distance from the ball's center to the closest point
-            let distanceX = this.x - closestX;
-            let distanceY = this.y - closestY;
+    // Calculate the distance from the ball's center to the closest point
+    let distanceX = this.x - closestX;
+    let distanceY = this.y - closestY;
 
-            // Check if the ball is colliding with the obstacle
-            if (distanceX * distanceX + distanceY * distanceY < this.radius * this.radius -1) {
-                // Collision detected
-                let collisionPoint = { x: closestX, y: closestY };
+    // Check if the ball is colliding with the obstacle
+    if (distanceX * distanceX + distanceY * distanceY < this.radius * this.radius) {
+        // Collision detected
+        let collisionPoint = { x: closestX, y: closestY };
 
-                // Calculate the normal at the collision point
-                let normal = { x: 0, y: 0 };
-                if (closestX === obstacle.x) {
-                    normal.x = -1; // Left edge
-                } else if (closestX === obstacle.x + obstacle.width) {
-                    normal.x = 1; // Right edge
-                }
-                if (closestY === obstacle.y) {
-                    normal.y = -1; // Top edge
-                } else if (closestY === obstacle.y + obstacle.height) {
-                    normal.y = 1; // Bottom edge
-                }
-
-                // Normalize the normal vector if it's a corner collision
-                if (normal.x !== 0 && normal.y !== 0) {
-                    let magnitude = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-                    normal.x /= magnitude;
-                    normal.y /= magnitude;
-                }
-                
-                return { collisionPoint, normal };
-            }
-
-            // No collision
-            return null;
+        // Calculate the normal at the collision point
+        let normal = { x: 0, y: 0 };
+        if (closestX === obstacle.x) {
+            normal.x = -1; // Left edge
+        } else if (closestX === obstacle.x + obstacle.width) {
+            normal.x = 1; // Right edge
         }
+        if (closestY === obstacle.y) {
+            normal.y = -1; // Top edge
+        } else if (closestY === obstacle.y + obstacle.height) {
+            normal.y = 1; // Bottom edge
+        }
+
+        // Normalize the normal vector if it's a corner collision
+        if (normal.x !== 0 && normal.y !== 0) {
+            let magnitude = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+            normal.x /= magnitude;
+            normal.y /= magnitude;
+        }
+        
+        return { collisionPoint, normal };
+    }
+
+    // No collision
+    return null;
+}
 
         drawBall(){
             
@@ -357,11 +373,9 @@ const myp5 = p => {
             for(let i=0;i<6;i++){
                 let startangle=i*this.p.PI/3;
                 if (i%2===0){
-                    //this.p.stroke(255,0,0);
                     this.p.fill(255,0,0);    
                 }
                 else{
-                    //this.p.stroke(255,255,255);
                     this.p.fill(255,255,255);
                 }
                 
@@ -369,7 +383,6 @@ const myp5 = p => {
             }
         }
     }
-    //let ball = new Ball(0,0);
 
     //************************
 
@@ -385,7 +398,6 @@ const myp5 = p => {
         }
 
         drawPlatform(){
-            this.platformMovement();
             this.p.stroke(20,20,20);
             this.p.fill(0,0,0);
             this.p.rect(this.x,this.y,this.width,this.height);
@@ -393,12 +405,12 @@ const myp5 = p => {
 
         platformMovement(){
             if (this.p.keyIsDown(37) || this.p.keyIsDown(65)){
-                this.velocity = this.velocity - canvasWidth/1000;
-                this.x = this.x + this.velocity;
+                this.velocity = this.velocity - canvasWidth/500;
+                this.x = this.x + this.velocity * this.p.deltaTime /100;
             }
             if (this.p.keyIsDown(39) || this.p.keyIsDown(68)){
-                this.velocity = this.velocity + canvasWidth/1000;
-                this.x = this.x + this.velocity;
+                this.velocity = this.velocity + canvasWidth/500;
+                this.x = this.x + this.velocity * this.p.deltaTime /100;
                 
             }
 
@@ -408,12 +420,9 @@ const myp5 = p => {
                 if (Math.abs(this.velocity) < 0.1){
                     this.velocity = 0;
                 }
-                if (this.velocity > 0){
-                    this.velocity = this.velocity - this.velocity/15;
-                }
-                if (this.velocity < 0){
-                    this.velocity = this.velocity - this.velocity/15;
-                }
+                this.velocity *= 0.8;
+
+
             }
             this.x = this.x + this.velocity;
 
@@ -449,8 +458,8 @@ const myp5 = p => {
         }
 
         animate(speed){
-            this.x += Math.sin(this.x) * speed;
-            this.y += Math.cos(this.x) * speed;
+            this.x += Math.sin(this.p.frameCount * this.p.PI/64) * Math.sin(this.p.frameCount * this.p.PI/32) * speed;
+            this.y += Math.cos(this.p.frameCount* this.p.PI/64) * Math.sin(this.p.frameCount * this.p.PI/32) *speed;
         }
     }
 
@@ -481,7 +490,8 @@ const myp5 = p => {
             
             //For each ellipse in the cloud
             for (let i=0;i<CLOUD_DETAIL;i++){
-                this.ellipses[i].x += canvasWidth/1000;     //Move the ellipse slightly to the right
+                const cloudSpeed = 0.01; // Adjust as needed
+                this.ellipses[i].x += Math.abs(Math.sin(this.x * cloudSpeed)) +0.5 ;     //Move the ellipse slightly to the right
                 
                 //If the ellipse goes past the right border of the canvas, move it back to the left
                 if (this.ellipses[i].x > canvasWidth + canvasWidth/CLOUD_COUNT){
@@ -496,30 +506,17 @@ const myp5 = p => {
     // Functions
 
     p.setup = function(){
-      
+
+        canvasHeight = p.windowHeight*0.8;
 
 
-        p.createCanvas(800,1000);
+        const myCanvas = p.createCanvas(canvasWidth, canvasHeight);
         p.frameRate(30);
-        canvasWidth = 800;
-        canvasHeight = 1000;
-    
-        let platform = new Platform(canvasWidth/2 + canvasWidth/10,canvasHeight/10 *9,canvasWidth/5,p);
+        myCanvas.parent(canvas);
+        let platform = new Platform(canvasWidth/2 + canvasWidth/10,canvasHeight/10 *9,canvasWidth/15,p);
         let ball = new Ball(canvasWidth/2,canvasHeight/10,p);
-        gameLevel = new GameLevel(platform,[ball],2,p.color(173, 216, 230),p);
+        gameLevel = new GameLevel(platform,ball,0,p.color(150, 200, 230),p);
     }
-
-    //******** Background Draw ****************************************
-
-    //Generate randomly shaped clouds. "count" is the count of clouds to be generated
-
-
-
-
-
-    // ***************************************************************************
-
-
 
     //*****************************************************************
 
@@ -527,6 +524,7 @@ const myp5 = p => {
         p.clear();
         gameLevel.update();
         gameLevel.draw();
+
     }
 
 }

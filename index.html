@@ -5,24 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bouncy Ball</title>
     <link rel="stylesheet" href="CSS/style.css">
+    <script src="p5.min.js"></script>
     <style>
         
       </style>
 </head>
 <body>
 
-<div class="mainContainer">
-    <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
+<div id="mainContainer">
+  <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
+  
+  <!-- STARTING SCREEN -->
+  <div id="startScreen">
     <button id="startGameButton">Start Game</button>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+  </div>
+  <!-- *************** -->
 
 
-<div id="endScreen">
+
+  <!-- GAME SCREEN -->
+  <div id="score">Score:</div>
+    <div id="scoreValue">0</div>
+  <div id="lives">Lives:</div>
+    <div id="livesCount">3</div>
+  <div id="gameCanvas"></div>
+  <!-- *************** -->
+
+
+
+  <!-- END SCREEN -->
+  <div id="endScreen">
     <p>Game Over!</p>
     <button id="restartBtn">Restart</button>
   </div>
 
 </div>
-<script>src="script.js"</script>
+<cdiv id="gameContainer" ></div>
+<script src="script.js"></script>
 </body>
 </html>
