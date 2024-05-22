@@ -125,3 +125,20 @@ body { text-align: center; }
 size: 100%
 }
 
+.endScreen{
+    background-color: #ee0606; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    margin-top: 150px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 40px;
+    transition:cubic-bezier();
+    transition-duration: 200ms;
+    border-radius: 20px;
+    
+
+}
+
