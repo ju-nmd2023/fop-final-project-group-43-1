@@ -144,6 +144,7 @@ const myp5 = p => {
             this.drawHearts();
         }
 
+        //THE FOLLOWING 13 LINES ARE HELP FROM CHAT GBT//
         drawHearts() {
             // Define heart properties
             let heartSize = 70 * (1 + (Math.sin(this.p.frameCount * this.p.PI /60)+0.8)/4 * Math.floor(1/this.lives)); // Size of each heart
