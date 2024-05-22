@@ -2,6 +2,7 @@ const MAX_VELOCITY = 30;
 const CLOUD_COUNT = 5;
 const CLOUD_DETAIL = 4;
 const SCORE_INCREMENT = 1000;
+const LIVES = 4;
 const canvas = document.getElementById('gameCanvas');
 const score = document.getElementById('scoreValue');
 const lives = document.getElementById('livesCount');
@@ -36,7 +37,7 @@ const myp5 = p => {
             this.obstCount = obstaclesCount;
             this.obstSpeed = 0;
             this.score = 0;
-            this.lives = 50;
+            this.lives = LIVES;
             this.obstacles = this.generateObstacles();
             this.background = new Background(bckgndColor,p);
             this.playing = true;
@@ -92,7 +93,7 @@ const myp5 = p => {
 
         draw(){
 
-            this.background.color = this.p.color((2-this.lives)*30+100,200 - (3-this.lives)*50,230 - (3-this.lives)*70);
+            this.background.color = this.p.color((LIVES-this.lives)*30+100,200 - (LIVES-this.lives)*50,230 - (LIVES-this.lives)*70);
             this.background.draw();
             this.platform.drawPlatform();
             for (let i=0; i<this.ballsCount; i++){
