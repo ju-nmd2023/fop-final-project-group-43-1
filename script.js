@@ -529,7 +529,50 @@ const myp5 = p => {
         gameLevel.draw();
     }
 
+
+
+//THE FOLLOWING LINES ARE HELP FROM CHAT GBT//
+
+function draw() {
+    clear();
+    gameLevel.update();
+    gameLevel.draw();
+ 
+    // Draw hearts representing remaining lives
+    drawHearts(gameLevel.lives);
 }
+
+function drawHearts(lives) {
+    // Define heart properties
+    let heartSize = 30; // Size of each heart
+    let heartPadding = 10; // Spacing between hearts
+    let heartsX = 20; // X-coordinate to start drawing hearts
+    let heartsY = 60; // Y-coordinate to draw hearts
+
+    // Draw hearts based on remaining lives
+    for (let i = 0; i < lives; i++) {
+        // Calculate position for each heart
+        let x = heartsX + (heartSize + heartPadding) * i;
+        let y = heartsY;
+
+        // Draw a heart shape
+        drawHeart(x, y, heartSize);
+    }
+}
+
+function drawHeart(x, y, size) {
+    // Draw a heart shape at the specified position and size
+    fill(255, 0, 0); // Red color
+    stroke(255, 0, 0); // Red color for outline
+    beginShape();
+    vertex(x, y + size * 0.5);
+    bezierVertex(x, y, x - size * 0.5, y - size * 0.5, x, y - size * 0.2);
+    bezierVertex(x + size * 0.5, y - size * 0.5, x, y, x, y + size * 0.5);
+    endShape(CLOSE);
+}
+
+function checkBallLives()
+
 
 
 
