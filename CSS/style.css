@@ -1,5 +1,6 @@
 body { text-align: center; }
         
+<<<<<<< HEAD
 #gameCanvas { display: none; }
         
 #endScreen { display: none; }
@@ -7,38 +8,148 @@ body { text-align: center; }
 .mainContainer{
     width:100%;
     min-height: 100vh;
-    background: url(IMG/background);
+    background: linear-gradient(180deg,#9fe9ff,#dbffa0);
     padding: 10px;
 }
 
+=======
+#endScreen { display: none; }
+>>>>>>> 66867295e273c6dd378fe170acf6b02f41b741b7
 
+#mainContainer{
+    width:100%;
+    min-height: 100vh;
+    background: linear-gradient(180deg,#9fe9ff,#dbffa0);
+    padding: 30px;
+    display: block;
+    border-radius: 100px;
+    margin: 10px;
+}
+
+
+#jersey-25-charted-regular {
+    font-family: "Jersey 25 Charted", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
 
 #name {
     font-size: 50px;
     color: rgb(255, 180, 20);
     text-align: center;
     margin-top: 20px;
+    text-shadow: 1px 1px 1px rgb(71, 10, 20);
 }
 
-****CSS***
-.pacifico-regular {
-    font-family: "Pacifico", cursive;
-    font-weight: 400;
-    font-style: normal;
+<<<<<<< HEAD
+#startGameButton {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 20px 30px;
+    font-size: 26px;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+    position: center;
+}
+
+#startGameButton:hover {
+    background-color: darkgreen;
+}
+
+
+=======
+
+
+#score {
+    font-size: 30px;
+    color: hsl(202, 100%, 22%);
+    margin-top: 20px;
+    margin-left: 20px;
+    text-align: left;
+    display: none;
+}
+
+#scoreValue{
+    position: relative;
+    font-size: 50px;
+    top: 5px;
+    color: rgb(8, 129, 199);
+
+    margin-left: 20px;
+    text-align: left;
+    display: none;
+    text-shadow: 1px 1px 1px rgb(71, 10, 20);
+}
+
+#lives {
+    font-size: 30px;
+    color: hsl(202, 100%, 22%);
+    margin-top: 20px;
+    margin-left: 100px;
+    text-align: left;
+    display: none;
+}
+#livesCount {
+    position: relative;
+    top: 5px;
+    font-size: 50px;
+    color: rgb(35, 216, 35);
+
+    margin-left: 20px;
+    text-align: left;
+    display: none;
+    text-shadow: 1px 1px 1px #3b3b06;
+}
+#startGameButton{
+    background-color: #04AA6D; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition:cubic-bezier();
+    transition-duration: 200ms;
+}
+
+#startGameButton:hover{
+    background-color: #09db68; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    transition:cubic-bezier();
+    transition-duration: 200ms;
+}
+
+#gameCanvas {
+    position: relative;
+    top: 50%;
+    width: 90%;
+    padding: 0;
+    border: 0cm;
+    margin: 0 auto;
+    background: linear-gradient(180deg,#9fe9ff,#dbffa0);
+    display: inline-block;
   }
 
-body {
-    overflow-x: hidden;
+#description {
+    .roboto-medium {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    }  
+    font-size: 30px;
+    color: rgb(218, 136, 29);
+    text-align: center;
+    margin-top: 20px;
+    text-shadow: 1px 1px 1px rgb(184, 35, 60);
+   
 }
-.main-width{
-    width: 1400px;
-    max-width: 95%;
-    margin: 0;
-}
-.hero{
-    height:100%;
-    width:100%;
-    min-height:100vh;
-    background: radial-gradient(#f9d349,20%,#d57e12);
-    position: relative;
-}
+>>>>>>> 66867295e273c6dd378fe170acf6b02f41b741b7
