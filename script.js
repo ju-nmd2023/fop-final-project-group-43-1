@@ -95,6 +95,36 @@ const myp5 = p => {
             this.p.fill(50,200,200);
             this.p.textSize(50);
             this.p.text("Level "+this.level,canvasWidth/100,canvasHeight/20);
+            this.drawHearts();
+        }
+
+        drawHearts() {
+            // Define heart properties
+            let heartSize = 70 * (1 + (Math.sin(this.p.frameCount * this.p.PI /60)+0.8)/4 * Math.floor(1/this.lives)); // Size of each heart
+            let heartPadding = 10; // Spacing between hearts
+            let heartsX = canvasWidth*0.95; // X-coordinate to start drawing hearts
+            let heartsY = canvasHeight/20; // Y-coordinate to draw hearts
+        
+            // Draw hearts based on remaining lives
+            for (let i = 0; i < this.lives; i++) {
+                // Calculate position for each heart
+                let x = heartsX - (heartSize + heartPadding) * i;
+                let y = heartsY;
+        
+                // Draw a heart shape
+                this.drawHeart(x, y, heartSize);
+            }
+        }
+        
+        drawHeart(x, y, size) {
+            // Draw a heart shape at the specified position and size
+            this.p.fill(255, 0, 0); // Red color
+            this.p.stroke(255, 0, 0); // Red color for outline
+            this.p.beginShape();
+            this.p.vertex(x, y + size * 0.5);
+            this.p.bezierVertex(x, y, x - size * 0.5, y - size * 0.5, x, y - size * 0.2);
+            this.p.bezierVertex(x + size * 0.5, y - size * 0.5, x, y, x, y + size * 0.5);
+            this.p.endShape(this.p.CLOSE);
         }
 
         generateObstacles() {
@@ -527,52 +557,6 @@ const myp5 = p => {
 
     }
 
-
-
-//THE FOLLOWING LINES ARE HELP FROM CHAT GBT//
-
-function draw() {
-    clear();
-    gameLevel.update();
-    gameLevel.draw();
- 
-    // Draw hearts representing remaining lives
-    drawHearts(gameLevel.lives);
-}
-
-function drawHearts(lives) {
-    // Define heart properties
-    let heartSize = 30; // Size of each heart
-    let heartPadding = 10; // Spacing between hearts
-    let heartsX = 20; // X-coordinate to start drawing hearts
-    let heartsY = 60; // Y-coordinate to draw hearts
-
-    // Draw hearts based on remaining lives
-    for (let i = 0; i < lives; i++) {
-        // Calculate position for each heart
-        let x = heartsX + (heartSize + heartPadding) * i;
-        let y = heartsY;
-
-        // Draw a heart shape
-        drawHeart(x, y, heartSize);
-    }
-}
-
-function drawHeart(x, y, size) {
-    // Draw a heart shape at the specified position and size
-    fill(255, 0, 0); // Red color
-    stroke(255, 0, 0); // Red color for outline
-    beginShape();
-    vertex(x, y + size * 0.5);
-    bezierVertex(x, y, x - size * 0.5, y - size * 0.5, x, y - size * 0.2);
-    bezierVertex(x + size * 0.5, y - size * 0.5, x, y, x, y + size * 0.5);
-    endShape(CLOSE);
-}
-
-function checkBallLives() {
-    if (gameLevel.lives == 0) {
-        console.log("you lose");
-    }
 }
 
 
