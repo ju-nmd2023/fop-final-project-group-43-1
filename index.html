@@ -16,33 +16,34 @@
 </head>
 <body>
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-=======
 <div id="mainContainer">
   <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
   
   <!-- STARTING SCREEN -->
-  <div class="startScreen">
-    <button id="startGameButton" class="startScreen">Start Game</button>
-    <p id="description" class="startScreen">Bouncy Bouncy a magestic and challenging game!
-      <br> Challenge yourself to see how long you can survive and achieve highscores.<br>
-      <br>You got 3 lives to prove yourself worthy to the ball, the more it bounces, the faster it goes!<br>
-      For every 1000 points that you score, you continue to the next level.
-      <br> At level 3 and up the game becomes more and more challenging!<br><br>
-      Enjoy the adrenaline ride and conquer the levels!
-    </p>
+  <div id="startScreenDiv">
+    <div id="descContainer">
+      <p id="description">Bouncy Bouncy a magestic and challenging game!
+        <br> Challenge yourself to see how long you can survive and achieve highscores.<br>
+        <br>You got 3 lives to prove yourself worthy to the ball, the more it bounces, the faster it goes!<br>
+        For every 1000 points that you score, you continue to the next level.
+        <br> At level 3 and up the game becomes more and more challenging!<br><br>
+        Enjoy the adrenaline ride and conquer the levels!
+      </p>
+    </div>
+    <button id="startGameButton">Start Game</button>
+    
   </div>
   <!-- *************** -->
->>>>>>> Stashed changes
 
 
 
   <!-- GAME SCREEN -->
-  <div id="score" class="scoreText">Score:</div>
-    <div id="scoreValue" class="scoreText"></div>
-  <div id="lives" class="scoreText">Lives:</div>
-    <div id="livesCount" class="scoreText"></div>
+  <div id="score" class="scoreTexts">Score:
+    <div id="scoreValue" class="scoreTexts"></div>
+  </div>
+  <div id="lives" class="livesTexts">Lives:
+    <div id="livesCount" class="livesTexts"></div>
+  </div>
   <div id="gameCanvas"></div>
   <!-- *************** -->
 
@@ -51,59 +52,13 @@
 
 
   <!-- END SCREEN -->
-  <div id="endScreen">
-    <p>Game Over!</p>
-    <button id="restartBtn">Restart</button>
-  </div>
-
-</div>
-<<<<<<< Updated upstream
-
-<script src="script.js" defer></script>
-=======
-<div id="mainContainer">
-  <h1 id="name" class="jersey-25-charted-regular">BOUNCY BOUNCY</h1>
-  
-  <!-- STARTING SCREEN -->
-  <div class="startScreen">
-    <button id="startGameButton" class="startScreen">Start Game</button>
-    <p id="description" class="startScreen">Bouncy Bouncy a magestic and challenging game!
-      <br> Challenge yourself to see how long you can survive and achieve highscores.<br>
-      <br>You got 3 lives to prove yourself worthy to the ball, the more it bounces, the faster it goes!<br>
-      For every 1000 points that you score, you continue to the next level.
-      <br> At level 3 and up the game becomes more and more challenging!<br><br>
-      Enjoy the adrenaline ride and conquer the levels!
-    </p>
-  </div>
-  <!-- *************** -->
-
-
-
-  <!-- GAME SCREEN -->
-  <div id="score" class="scoreText">Score:</div>
-    <div id="scoreValue" class="scoreText"></div>
-  <div id="lives" class="scoreText">Lives:</div>
-    <div id="livesCount" class="scoreText"></div>
-  <div id="gameCanvas"></div>
-  <!-- *************** -->
-
-
-
-
-
-  <!-- END SCREEN -->
-  <div id="endScreen">
-    <p>Game Over!</p>
-    <button id="restartBtn">Restart</button>
+  <div id="endScreenDiv" class="endScreen">
+    <p class="endScreen">Game Over!</p>
+    <button id="restartGameButton" class="endScreen">Restart</button>
   </div>
 
 </div>
 <cdiv id="gameContainer" ></div>
 <script src="script.js"></script>
->>>>>>> 66867295e273c6dd378fe170acf6b02f41b741b7
-=======
-<cdiv id="gameContainer" ></div>
-<script src="script.js"></script>
->>>>>>> Stashed changes
 </body>
 </html>

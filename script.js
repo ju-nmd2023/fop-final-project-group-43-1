@@ -6,38 +6,58 @@ const LIVES = 4;
 const canvas = document.getElementById('gameCanvas');
 const score = document.getElementById('scoreValue');
 const lives = document.getElementById('livesCount');
+const startScreenDiv = document.getElementById('startScreenDiv');
+const endScreenDiv= document.getElementById('endScreenDiv');
+const scoreTexts = document.getElementById('score');
+const livesTexts = document.getElementById('lives');
 let canvasWidth = canvas.clientWidth;
 let canvasHeight;
 let scoreValue = 0;
+let game;
 
 
 
 document.getElementById('startGameButton').addEventListener('click', function() {
     // Hide the start button
-    this.style.display = 'none';
-    document.getElementById('')
-    const mainContainer = document.getElementById('gameCanvas');
-    mainContainer.style.display = 'block';
+    startScreenDiv.style.display = 'none';
+    // for (let i=0; i<startScreenElements.length;i++){
+    //     startScreenElements[i].style.display = 'none';
+    // }
 
-    let startScreenElements = document.getElementsByClassName('startScreen');
-    for (let i=0; i<startScreenElements.length;i++){
-        startScreenElements[i].style.display = 'none';
-    }
-
-    let scoreTexts = document.getElementsByClassName('scoreText');
-    for (let i=0; i<scoreTexts.length;i++){
-        scoreTexts[i].style.display = 'inline-block';
-    }
-
+    livesTexts.style.display = 'inline-block';
+    scoreTexts.style.display = 'inline-block';
+    // for (let i=0; i<scoreTexts.length;i++){
+    //     scoreTexts[i].style.display = 'inline-block';
+    // }
+    // for (let i=0; i<livesTexts.length;i++){
+    //     livesTexts[i].style.display = 'inline-block';
+    // }
     
     // Show the game canvas
     //document.getElementById('mainContainer').style.display = 'none';
     canvas.style.display = 'block';
     
     // Start the game
-    let game = new p5(myp5,mainContainer);
-    
+    game = new p5(myp5,mainContainer);
 });
+
+function showEndScreen(){
+    livesTexts.style.display = 'none';
+    endScreenDiv.style.display= 'block';
+
+}
+
+document.getElementById('restartGameButton').addEventListener('click', function() {
+    endScreenDiv.style.display = 'none';
+    startScreenDiv.style.display = 'block';
+    scoreTexts.style.display = 'none';
+});
+
+
+
+
+
+
 
 const myp5 = p => {
     class GameLevel{
@@ -54,6 +74,7 @@ const myp5 = p => {
             this.background = new Background(bckgndColor,p);
             this.playing = true;
             this.level = 0;
+            this.gameOver =  false;
         }
 
         update(){
@@ -268,7 +289,7 @@ const myp5 = p => {
         constructor(posX,posY,p){
             this.x = posX;
             this.y = posY;
-            this.radius = canvasHeight/15;
+            this.radius = canvasHeight/60;
             this.velocityX = 0;
             this.velocityY = 0;
             this.gravity = 0.2;
@@ -396,6 +417,7 @@ const myp5 = p => {
         calculateCollisionPointAndNormal(obstacle) {
             // Find the closest point on the obstacle to the ball's center
             let collisionPoint;
+            let normal;
             let obstacleWidth;
             let obstacleHeight;
             let closestX;
@@ -405,7 +427,11 @@ const myp5 = p => {
                 let ballDistX = Math.abs(this.x - obstacle.x);
                 let ballDistY = Math.abs(this.y - obstacle.y);
                 if (ballDistX*ballDistX + ballDistY*ballDistY <= this.radius * this.radius){
-                    collisionPoint = {x: Math.min(this.x,obstacle.x) + (this.x)}
+                    collisionPoint = {x: Math.min(this.x,obstacle.x) + (this.x - obstacle.x) * (this.x - obstacle.x)/4,
+                                    y: Math.min(this.x,obstacle.y) + (this.y - obstacle.y) * (this.y - obstacle.y)/4}
+                    
+                    normal = {x: 1, y: 1};
+                    return { collisionPoint, normal };
                 }
                 
                 
@@ -427,7 +453,7 @@ const myp5 = p => {
                     collisionPoint = { x: closestX, y: closestY };
 
                     // Calculate the normal at the collision point
-                    let normal = { x: 0, y: 0 };
+                    normal = { x: 0, y: 0 };
                     if (closestX === obstacle.x) {
                         normal.x = -1; // Left edge
                     } else if (closestX === obstacle.x + obstacleWidth) {
@@ -471,14 +497,13 @@ const myp5 = p => {
                     this.p.fill(255,255,255);
                 }
                 
-                this.p.arc(this.x, this.y, this.radius/2, this.radius/2, startangle + this.rotation, startangle + this.rotation+this.p.PI/3);
+                this.p.arc(this.x, this.y, this.radius*2, this.radius*2, startangle + this.rotation, startangle + this.rotation+this.p.PI/3);
             }
         }
     }
 
     //************************
 
-<<<<<<< Updated upstream
     //** Platform Properties *****
     class Platform {
         constructor(posX,posY,width,p){
@@ -488,29 +513,6 @@ const myp5 = p => {
             this.width = width;
             this.height = width/5;
             this.p = p;
-=======
-//** Platform Properties *****
-class Platform {
-    constructor(posX,posY,width){
-        this.x = posX;
-        this.y = posY;
-        this.velocity = 0;
-        this.width = width;
-        this.height = width/5;
-    }
-
-    drawPlatform(){
-        this.platformMovement();
-        stroke(20,20,20);
-        fill(150,75,0);
-        rect(this.x,this.y,this.width,this.height);
-    }
-
-    platformMovement(){
-        if (keyIsDown(37) || keyIsDown(65)){
-            this.velocity = this.velocity - 2;
-            this.x = this.x + this.velocity;
->>>>>>> Stashed changes
         }
 
         drawPlatform(){
@@ -618,59 +620,7 @@ class Platform {
         }
     }
 
-<<<<<<< Updated upstream
     //*****************************
-=======
-//THE FOLLOWING LINES ARE HELP FROM CHAT GBT//
-
-function draw() {
-    clear();
-    gameLevel.update();
-    gameLevel.draw();
- 
-    // Draw hearts representing remaining lives
-    drawHearts(gameLevel.lives);
-}
-
-function drawHearts(lives) {
-    // Define heart properties
-    let heartSize = 30; // Size of each heart
-    let heartPadding = 10; // Spacing between hearts
-    let heartsX = 20; // X-coordinate to start drawing hearts
-    let heartsY = 60; // Y-coordinate to draw hearts
-
-    // Draw hearts based on remaining lives
-    for (let i = 0; i < lives; i++) {
-        // Calculate position for each heart
-        let x = heartsX + (heartSize + heartPadding) * i;
-        let y = heartsY;
-
-        // Draw a heart shape
-        drawHeart(x, y, heartSize);
-    }
-}
-
-function drawHeart(x, y, size) {
-    // Draw a heart shape at the specified position and size
-    fill(255, 0, 0); // Red color
-    stroke(255, 0, 0); // Red color for outline
-    beginShape();
-    vertex(x, y + size * 0.5);
-    bezierVertex(x, y, x - size * 0.5, y - size * 0.5, x, y - size * 0.2);
-    bezierVertex(x + size * 0.5, y - size * 0.5, x, y, x, y + size * 0.5);
-    endShape(CLOSE);
-}
-
-function checkBallLives() {
-    if (gameLevel.lives == 0) {
-        console.log("you lose");
-    }
-}
-
-
-
-
->>>>>>> Stashed changes
 
     // Functions
 
@@ -693,7 +643,17 @@ function checkBallLives() {
         p.clear();
         gameLevel.update();
         gameLevel.draw();
-
+        if (gameLevel.gameOver){
+            showEndScreen();
+            p.remove();
+        }
+        
     }
-
 }
+
+
+
+
+
+
+
