@@ -83,7 +83,7 @@ body { text-align: center; }
     font-size: 40px;
     transition:cubic-bezier();
     transition-duration: 200ms;
-    border-radius: 10px;
+    border-radius: 30px;
     position: relative;
 }
 
@@ -120,3 +120,8 @@ body { text-align: center; }
 #endScreenDiv {
     display: none;
 }
+
+.endScreen {
+size: 100%
+}
+
