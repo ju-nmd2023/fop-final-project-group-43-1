@@ -443,12 +443,7 @@ function myp5(p) {
 
             }
             
-            for (let i=0; i<balls.length; i++){
-                if (this != balls[i]){
-                    this.calculateCollisionPointAndNormal(balls[i]);
-                    
-                }
-            }
+
             //if ball drops below canvas
             if(this.y>canvasHeight){
                 this.x = canvasWidth /2;
