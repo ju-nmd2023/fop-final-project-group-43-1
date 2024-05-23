@@ -122,7 +122,11 @@ body { text-align: center; }
 }
 
 .endScreen {
-size: 100%
+    font-size: 80px;
+    color: rgb(255, 180, 20);
+    text-align: center;
+    margin-top: 20px;
+    text-shadow: 1px 1px 1px rgb(71, 10, 20);
 
 }
 
