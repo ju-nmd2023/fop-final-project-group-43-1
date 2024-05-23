@@ -1,8 +1,11 @@
-const MAX_VELOCITY = 30;
-const CLOUD_COUNT = 5;
-const CLOUD_DETAIL = 4;
-const SCORE_INCREMENT = 1000;
-const LIVES = 4;
+// Gameplay Constants
+const MAX_VELOCITY = 30;    //Ball velocity cap
+const CLOUD_COUNT = 5;      //How many clouds to draw
+const CLOUD_DETAIL = 4;     //How many ellipses each cloud has ("resolution of cloud")
+const SCORE_INCREMENT = 300;    //Large amount to help test the game without taking too much time
+const LIVES = 3;            //Player lives
+
+
 const canvas = document.getElementById('gameCanvas');
 const score = document.getElementById('scoreValue');
 const lives = document.getElementById('livesCount');
@@ -14,137 +17,195 @@ let canvasWidth = canvas.clientWidth;
 let canvasHeight;
 let scoreValue = 0;
 let game;
+let gameLevel;
+startScreen();
 
 
 
-document.getElementById('startGameButton').addEventListener('click', function() {
+
+function gameScreen() {
     // Hide the start button
     startScreenDiv.style.display = 'none';
-    // for (let i=0; i<startScreenElements.length;i++){
-    //     startScreenElements[i].style.display = 'none';
-    // }
-
+    
+    //Show Score and Lives
     livesTexts.style.display = 'inline-block';
     scoreTexts.style.display = 'inline-block';
-    // for (let i=0; i<scoreTexts.length;i++){
-    //     scoreTexts[i].style.display = 'inline-block';
-    // }
-    // for (let i=0; i<livesTexts.length;i++){
-    //     livesTexts[i].style.display = 'inline-block';
-    // }
     
-    // Show the game canvas
-    //document.getElementById('mainContainer').style.display = 'none';
+    // Show the Canvas element
     canvas.style.display = 'block';
     
-    // Start the game
-    game = new p5(myp5,mainContainer);
-});
+    // Start the game / p5 instance
+    game = new p5(myp5,canvas);
+}
+
 
 function showEndScreen(){
+    //Hide canvas
+    canvas.style.display = 'none';
+
+    //Hide Lives
     livesTexts.style.display = 'none';
+
+    //Show End Screen elements
     endScreenDiv.style.display= 'block';
 
 }
 
-document.getElementById('restartGameButton').addEventListener('click', function() {
+function startScreen() {
+    //Hide canvas
+    canvas.style.display = 'none';
+
+    //Hide End Screen elements
     endScreenDiv.style.display = 'none';
-    startScreenDiv.style.display = 'block';
+    
+    //Hide Score
     scoreTexts.style.display = 'none';
-});
+
+    //Hide Lives
+    livesTexts.style.display = 'none';
+
+    //Show Start Screen elements
+    startScreenDiv.style.display = 'block';
+    
+}
+
+//Start Button Click Event
+document.getElementById('startGameButton').addEventListener('click', gameScreen);
+
+//Restart Button Click Event
+document.getElementById('restartGameButton').addEventListener('click', startScreen);
 
 
 
+// Game Implementation
 
-
-
-
-const myp5 = p => {
+//p5 js Instance
+function myp5(p) {
+    
+    //GameLevel class represents a state of the game
     class GameLevel{
-        constructor(platform,ball,obstaclesCount, bckgndColor,p){
-            this.p = p;
-            this.platform = platform;
-            this.balls = [ball];
-            this.ballsCount = 1;
-            this.obstCount = obstaclesCount;
-            this.obstSpeed = 0;
-            this.score = 0;
-            this.lives = LIVES;
-            this.obstacles = this.generateObstacles();
-            this.background = new Background(bckgndColor,p);
-            this.playing = true;
-            this.level = 0;
-            this.gameOver =  false;
+        constructor(bckgndColor,p){
+            this.p = p;                                                 //p5 Instance pointer to call p5 functions
+            this.platform = new Platform(p);                                   //Platform Class instance
+            this.balls = [new Ball(canvasWidth/2,canvasHeight/10,p)];   //Array of all Ball class instances (= Balls present in the state)
+            this.ballsCount = 1;                                        //How many balls there are in the state
+            this.obstCount = 0;                                         //How many obstacles there are in the state
+            this.obstSpeed = 0;                                         //How fast obstacles are animated (same for all obstacles)
+            this.score = 0;                                             //Current Score
+            this.lives = LIVES;                                         //Current Lives
+            this.obstacles = this.generateObstacles();                  //Array of all Obstacle class instances (=Obstacles present in the state). generateObstacles() randomly returns
+            this.background = new Background(bckgndColor,p);            //Background class instance
+            this.level = 1;                                             //Current game level
+            this.gameOver =  false;                                     //Is the game over?
+            this.streak = 0;                                            //Score raised without losing lives
+            this.streakBonus = 0;
         }
 
         update(){
-            score.innerText = Math.floor(this.score);
-            lives.innerText = this.lives;
-            if (this.playing){
+
+            //If game is NOT over yet
+            if (!this.gameOver){
+                this.streakBonus = (Math.sqrt(this.streak)/15).toFixed(2);
+                this.background.update(this.streak);
+                
                 //Pass Levels based on Score:
-                if (this.level != Math.floor(this.score/1000)){
-                    this.level = Math.floor(this.score/1000);
-                    if (this.level <= 2){
-                        this.obstCount = this.level*2;
+                if (this.level -1 != Math.floor(this.score/1000)){
+                    this.level = Math.floor(this.score/1000) +1;
+                    
+                    //At levels 2 and 3, add 2 more obstacles each time
+                    if (this.level <= 3){
+                        this.obstCount += 2;
                         this.obstacles = this.generateObstacles();
                     }
                 }
                 
+                //At level 3 and beyond
                 if (this.level >= 3){
+
+                    //Add one more ball once
                     if (this.ballsCount == 1){
                         this.ballsCount = 2;
                         this.platform.width *= 2;
                         let newBall = new Ball(4.5 * canvasWidth/10 ,canvasHeight/10,this.p);
                         this.balls[1] = newBall;
                     }
+
+                    //Add Obstacle speed based on how high the score gets
                     this.obstSpeed = Math.floor(this.score/800);
+                    //Animate Obstacles
                     for (let i=0; i< this.obstCount; i++){
                         this.obstacles[i].animate(this.obstSpeed);
                     }
                 }
+
+                //Player movement
                 this.platform.platformMovement();
                 
-                //Evaluation is a struct {ScoreChange,LivesCountChange}
+                //Update all balls, checking collisions and moving them, and evaluate score and lives changes
                 for (let i=0; i<this.balls.length; i++){
-                    let evaluation = this.balls[i].collisions(this.platform,this.obstacles,this.balls);
+                    let evaluation = this.balls[i].collisions(this.platform,this.obstacles,this.balls); //Evaluation is a struct {ScoreChange,LivesCountChange}
                 
                     this.balls[i].move();
-                    this.score += evaluation.scoreChange;
+                    this.score += evaluation.scoreChange * (1 + this.streakBonus/10);
                     this.lives += evaluation.livesChange;
+                    if (evaluation.livesChange == -1){
+                        this.streak = 0;
+                    }
+                    else if (evaluation.scoreChange !=0){
+                        this.streak++;
+                    }
+
                 }
                 
-
+                //If lives reach 0, game is over.
                 if (this.lives == 0){
                     this.gameOver = true;
-                    this.playing = false;
                 }
-
                 
             }
-            
+
+            //Update Score and Lives HTML texts
+            score.innerText = Math.floor(this.score);
+            lives.innerText = this.lives;
         }
 
-        draw(){
 
-            this.background.color = this.p.color((Math.min(LIVES-this.lives,1))*30+100,200 - (LIVES-this.lives)*50,230 - (LIVES-this.lives)*70);
+        draw(){
+            //Draw Background. Background Color changes based on lives remaining
+            this.background.color = this.p.color((Math.min(LIVES-this.lives,1))*30+100, 200 - (LIVES-this.lives)*50,230 - (LIVES-this.lives)*70);
             this.background.draw();
+
+            //Draw Level Text
+            this.p.stroke(20,60,60);
+            this.p.fill(50,200,255);
+            this.p.textSize(50);
+            this.p.text("Level "+this.level,canvasWidth/100,canvasHeight/20);
+            
+            //Draw Streak Text
+            this.p.stroke(20,60,60);
+            this.p.fill(250,255,50);
+            this.p.textSize(30);
+            this.p.text("Streak Bonus: "+Math.floor(this.streakBonus*100)+"%",canvasWidth/100,2*canvasHeight/20);
+
+            //Draw Platform
             this.platform.drawPlatform();
+
+            //Draw all Balls
             for (let i=0; i<this.ballsCount; i++){
                 this.balls[i].drawBall();
             }
             
-            
+            //Draw all Obstacles
             for (let i=0; i<this.obstacles.length; i++){
                 this.obstacles[i].drawObstacle();
             }
-            this.p.noStroke();
-            this.p.fill(50,200,200);
-            this.p.textSize(50);
-            this.p.text("Level "+this.level,canvasWidth/100,canvasHeight/20);
+
+            //Draw Hearts-Lives
             this.drawHearts();
         }
 
-        //THE FOLLOWING 13 LINES ARE HELP FROM CHAT GBT//
+        //The drawHearts and drawHeart were provided by ChatGPT, and adjustments were made to incorporate the gameLevel lives
+        //and add an animation for the last heart remaining
         drawHearts() {
             // Define heart properties
             let heartSize = 70 * (1 + (Math.sin(this.p.frameCount * this.p.PI /60)+0.8)/4 * Math.floor(1/this.lives)); // Size of each heart
@@ -174,6 +235,7 @@ const myp5 = p => {
             this.p.endShape(this.p.CLOSE);
         }
 
+        //Generate random Obstacles
         generateObstacles() {
             let obstacleCount = this.obstCount;
             let obstacles = [];
@@ -186,49 +248,67 @@ const myp5 = p => {
             for (let i = 0; i < obstacleCount; i++) {
                 
                 // Define the obstacle's width and height with a random size
-                width = Math.random() * (canvasWidth / 6) + canvasWidth / 16; // Minimum width of canvasWidth / 16
-                height = Math.random() * (canvasHeight / 5) + canvasHeight / 16; // Minimum height of canvasWidth / 16
-    
-                // Random position within the canvas bounds, accounting for the obstacle's size
+                width = Math.random() * (canvasWidth / 6) + canvasWidth / 10; // Minimum width of canvasWidth / 16
+                height = Math.random() * (canvasHeight / 5) + canvasHeight / 10; // Minimum height of canvasWidth / 16
+
+                // Random position within the canvas bounds, accounting for the obstacle's size so that it doesn't block the middle of the canvas
+                // in order to avoid having new balls fall on top of them and get stuck.
                 x = i*minDistance + Math.random() * (minDistance - width) ;
                 y = Math.random() * (2* canvasHeight/3 - height );
-                
-                for (let i=0; i<this.balls.length; i++){
-                    if (x <= this.balls[i].x){
-                        x = this.p.constrain(x,20,this.balls[i].x - this.balls[i].radius/2 - width)
+                //                                                                                        Canvas shape
+                //                                                                                _____________________________
+                for (let i=0; i<this.balls.length; i++){//                                       |            ball            |
+                    //Constrain the x position so that                                           |{obstacle} middle {obstacle}|
+                    //the obstacle doesn't block the middle of the canvas                        ------------------------------
+                    if (x <= canvasWidth/2){
+                        x = this.p.constrain(x,20,canvasWidth/2 - this.balls[i].radius - width)
                     }
                     else{
-                        x = this.p.constrain(x,this.balls[i].x + this.balls[i].radius/2 + width,canvasWidth);
+                        x = this.p.constrain(x,canvasWidth/2 + this.balls[i].radius,canvasWidth);
                     }
                 }
-                
+
                 let obstacle = new Obstacle(x,y,width,height,p);
-                console.log(obstacle);
+
                 // Add the non-overlapping obstacle to the array
                 obstacles.push(obstacle);
             }
-            console.log(obstacles);
-            console.log(obstacles.length);
+            
             return obstacles;
         }
     }
-    let gameLevel;
+
 
     class Background{
         constructor(color,p){
-            this.color = color;
-            this.clouds = this.generateClouds(CLOUD_COUNT);
-            this.p = p;
+            this.color = color;                             //Background color (changes depending on lives remaining)
+            this.clouds = this.generateClouds(CLOUD_COUNT); //Array of Cloud instances
+            this.p = p;                                     //p5 Instance pointer to call p5 functions
         }
 
-        update(){
+
+        update(streak){
             for (let i=0; i<CLOUD_COUNT; i++){
                 this.clouds[i].animateCloud();
+
+                //If streak is higher or equal to 4, turn the clouds into rainbows
+                if (streak >= 4){
+                    let speed = this.p.constrain(streak/2,0,10);
+                    
+                    let red = 255 * (Math.sin(this.p.frameCount * this.p.PI/256 * Math.floor(speed) +this.p.PI/3) +1)/2;
+                    let green = 255 * (Math.sin(this.p.frameCount * this.p.PI/256 * Math.floor(speed) + 2* this.p.PI/3 ) +1)/2;
+                    let blue = 255 * (Math.sin(this.p.frameCount * this.p.PI/256 * Math.floor(speed) + 4* this.p.PI/3) +1)/2;
+                    
+                    this.clouds[i].color = this.p.color(red, green, blue);
+                }
+                else{
+                    this.clouds[i].color = this.p.color(255,255,255);
+                }
             }
             
-            if (streak == true){
-                color = color + Math.sin(clouds[0].x) * 5;
-            }
+            
+            
+            
         }
 
         draw(){
@@ -296,7 +376,7 @@ const myp5 = p => {
             this.gravity = 0.2;
             this.rotation = 0;
             this.bounced = false;
-            this.p = p;
+            this.p = p;                                     //p5 Instance pointer to call p5 functions
         }
         
         move(){
@@ -368,14 +448,8 @@ const myp5 = p => {
             
             for (let i=0; i<balls.length; i++){
                 if (this != balls[i]){
-                    let collisionInfo = this.calculateCollisionPointAndNormal(balls[i]);
-                    if (collisionInfo != null){
-                        this.adjustTrajectory(collisionInfo.normal.x,collisionInfo.normal.y);
-                        this.x = collisionInfo.collisionPoint.x + (this.radius) * collisionInfo.normal.x;
-                        this.y = collisionInfo.collisionPoint.y + (this.radius) * collisionInfo.normal.y;
-                        balls[i].x = this.x + (-1) * this.radius * collisionInfo.normal.x;
-                        balls[i].y = this.y + (-1) * this.radius * collisionInfo.normal.y;
-                }
+                    this.calculateCollisionPointAndNormal(balls[i]);
+                    
                 }
             }
             //if ball drops below canvas
@@ -423,18 +497,19 @@ const myp5 = p => {
             let obstacleHeight;
             let closestX;
             let closestY;
-            console.log(this);
+
             if (obstacle instanceof Ball){
-                let ballDistX = Math.abs(this.x - obstacle.x);
-                let ballDistY = Math.abs(this.y - obstacle.y);
-                if (ballDistX*ballDistX + ballDistY*ballDistY <= this.radius * this.radius){
-                    collisionPoint = {x: Math.min(this.x,obstacle.x) + (this.x - obstacle.x) * (this.x - obstacle.x)/4,
-                                    y: Math.min(this.x,obstacle.y) + (this.y - obstacle.y) * (this.y - obstacle.y)/4}
-                    
-                    normal = {x: 1, y: 1};
+                let ballDistX = Math.abs(this.x +this.velocityX - obstacle.x -obstacle.velocityX);
+                let ballDistY = Math.abs(this.y +this.velocityY- obstacle.y -obstacle.velocityY);
+                if (ballDistX*ballDistX + ballDistY*ballDistY <= this.radius * this.radius+1){
+                    δδthis.velocityX *= -1;
+                    this.velocityY *= -1;
+                    obstacle.velocityX *= -1;
+                    obstacle.velocityY *= -1;
+                    normal={x:0,y:0};
+                    collisionPoint = {x:0,y:0};
                     return { collisionPoint, normal };
                 }
-                
                 
             }
             else{
@@ -507,13 +582,13 @@ const myp5 = p => {
 
     //** Platform Properties *****
     class Platform {
-        constructor(posX,posY,width,p){
-            this.x = posX;
-            this.y = posY;
+        constructor(p){
+            this.x = canvasWidth/2;
+            this.y = canvasHeight/10 *9;
             this.velocity = 0;
-            this.width = width;
-            this.height = width/5;
-            this.p = p;
+            this.width = canvasWidth/15;
+            this.height = this.width/5;
+            this.p = p;                                     //p5 Instance pointer to call p5 functions
         }
 
         drawPlatform(){
@@ -567,7 +642,7 @@ const myp5 = p => {
             this.width = width;
             this.height = height;
             this.color = [Math.random() * 80 + 100,Math.random() * 80 + 100,Math.random() * 150];
-            this.p = p;
+            this.p = p;                                     //p5 Instance pointer to call p5 functions
         }
 
         drawObstacle(){
@@ -585,20 +660,21 @@ const myp5 = p => {
 
 
     //*** Clouds Properties ******
-    let cloudsGenerated = false;
+
     class Cloud{
         constructor(x,y,ellipses,p){
             this.x = x;
             this.y = y;
             this.ellipses = ellipses;
-            this.p = p;
+            this.p = p;                                     //p5 Instance pointer to call p5 functions
+            this.color = this.p.color(255,255,255);
         }
 
         drawCloud(){
-            this.animateCloud();
             for (let i=0;i<CLOUD_DETAIL;i++){
-                this.p.stroke(255,255,255);
-                this.p.fill(255,255,255);
+                this.p.noStroke();
+
+                this.p.fill(this.color);
                 this.p.ellipse(this.ellipses[i].x,this.ellipses[i].y,this.ellipses[i].width,this.ellipses[i].height);
                 
             }
@@ -629,13 +705,11 @@ const myp5 = p => {
 
         canvasHeight = p.windowHeight*0.8;
 
-
         const myCanvas = p.createCanvas(canvasWidth, canvasHeight);
         p.frameRate(30);
         myCanvas.parent(canvas);
-        let platform = new Platform(canvasWidth/2 + canvasWidth/10,canvasHeight/10 *9,canvasWidth/15,p);
-        let ball = new Ball(canvasWidth/2,canvasHeight/10,p);
-        gameLevel = new GameLevel(platform,ball,0,p.color(150, 200, 230),p);
+
+        gameLevel = new GameLevel(p.color(150, 200, 230),p);
     }
 
     //*****************************************************************
@@ -658,3 +732,4 @@ const myp5 = p => {
 
 
 
+aa

@@ -1,11 +1,11 @@
 body { text-align: center; }
-        
-#endScreen { display: none; }
 
 #mainContainer{
     width:100%;
     min-height: 100vh;
-    background: linear-gradient(180deg,#9fe9ff,#dbffa0);
+    background-image: url("/IMG/ball.jpg");
+    background-repeat: no-repeat;
+    background-size: cover; 
     padding: 30px;
     display: block;
     border-radius: 100px;
@@ -21,10 +21,11 @@ body { text-align: center; }
 
 #name {
     font-size: 80px;
-    color: rgb(255, 180, 20);
+    color: rgb(102, 230, 63);
     text-align: center;
+
     margin-top: 20px;
-    text-shadow: 1px 1px 1px rgb(71, 10, 20);
+    text-shadow: 2px 2px 2px rgb(71, 10, 20);
 }
 
 
@@ -32,43 +33,48 @@ body { text-align: center; }
 #score {
     font-size: 30px;
     color: hsl(202, 100%, 22%);
-    margin-top: 10px;
-    /* margin-left: 20px; */
     text-align: left;
-    display: none;
+    display: inline-flex;
+    border-radius: 10px;
+    background-color: hwb(202 75% 1%);
+    padding: 10px;
 }
 
 #scoreValue{
     position: relative;
     font-size: 50px;
-    top: 5px;
     color: rgb(8, 129, 199);
-
+    border-radius: 10px;
+    background-color: hwb(202 75% 1%);
     margin-left: 20px;
     text-align: left;
-    display: inline-block;
+    display: inline-flex;
     text-shadow: 1px 1px 1px rgb(71, 10, 20);
+    padding: 10px;
 }
 
 #lives {
     font-size: 30px;
-    color: hsl(202, 100%, 22%);
-
+    color: hsl(118, 100%, 22%);
+    border-radius: 10px;
+    background-color: rgb(176, 235, 176);
     margin-left: 100px;
     text-align: left;
-    display: none;
+    display: inline-flex;
+    padding: 10px;
 }
 
 #livesCount {
     position: relative;
-    top: 5px;
     font-size: 50px;
-    color: rgb(35, 216, 35);
-
+    color: rgb(24, 170, 24);
+    border-radius: 10px;
+    background-color: rgb(176, 235, 176);
     margin-left: 20px;
     text-align: left;
-    display: inline-block;
+    display: inline-flex;
     text-shadow: 1px 1px 1px #3b3b06;
+    padding: 10px;
 }
 
 #startGameButton{
@@ -101,7 +107,7 @@ body { text-align: center; }
     margin: 0 auto;
     background: linear-gradient(180deg,#9fe9ff,#dbffa0);
     display: inline-block;
-  }
+}
 
 #description {
     width: a;
@@ -110,20 +116,11 @@ body { text-align: center; }
     text-align: center;
     margin-top: 80px;
     text-shadow: 1px 1px 1px hwb(350 10% 55%);
-    background: linear-gradient(30deg,#4b8b209c,#2d74a3a9);
+    background: linear-gradient(30deg,#8b4b20,#2d74a3);
     padding: 30px;
     border-radius: 100px;
     display: inline-flex;
     
-}
-
-#endScreenDiv {
-    display: none;
-}
-
-.endScreen {
-size: 100%
-
 }
 
 #restartGameButton{
@@ -133,5 +130,15 @@ size: 100%
     transition:cubic-bezier();
     transition-duration: 200ms;
     border-radius: 30px;
+    margin-top: 100px;
     position: relative;
+}
+
+#gameOverText {
+    font-size: 60px;
+    color: rgb(245, 70, 39);
+    text-align: center;
+    margin-top: 20px;
+    text-shadow: 1px 1px 1px rgb(71, 10, 20);
+    display: block;
 }
