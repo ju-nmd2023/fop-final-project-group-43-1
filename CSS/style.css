@@ -3,9 +3,9 @@ body { text-align: center; }
 #mainContainer{
     width:100%;
     min-height: 100vh;
-    background-image: url('../IMG/ball.jpg')
-    background-repeat: no-repeat;
-    background-size: cover; 
+    background-image: url('../IMG/ball.jpg');
+/*     background-repeat: no-repeat;
+    background-size: cover;  */
     padding: 30px;
     display: block;
     border-radius: 100px;
