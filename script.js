@@ -1,11 +1,8 @@
-// Gameplay Constants
-const MAX_VELOCITY = 30;    //Ball velocity cap
-const CLOUD_COUNT = 5;      //How many clouds to draw
-const CLOUD_DETAIL = 4;     //How many ellipses each cloud has ("resolution of cloud")
-const SCORE_INCREMENT = 300;    //Large amount to help test the game without taking too much time
-const LIVES = 3;            //Player lives
-
-
+const MAX_VELOCITY = 30;
+const CLOUD_COUNT = 5;
+const CLOUD_DETAIL = 4;
+const SCORE_INCREMENT = 150;
+const LIVES = 3;
 const canvas = document.getElementById('gameCanvas');
 const score = document.getElementById('scoreValue');
 const lives = document.getElementById('livesCount');
