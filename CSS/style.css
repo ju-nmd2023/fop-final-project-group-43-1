@@ -124,14 +124,16 @@ body { text-align: center; }
 .endScreen {
 size: 100%
 
+
 }
 
 #restartGameButton{
     background-color: rgb(29, 205, 38);
-    font-size: 70px;
+    font-size: 40px;
     color:white;
     transition:cubic-bezier();
     transition-duration: 200ms;
     border-radius: 30px;
     position: relative;
 }
+
