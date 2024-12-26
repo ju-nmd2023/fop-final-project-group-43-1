@@ -11,7 +11,7 @@ const endScreenDiv= document.getElementById('endScreenDiv');
 const scoreTexts = document.getElementById('score');
 const livesTexts = document.getElementById('lives');
 let canvasWidth = canvas.clientWidth;
-let canvasHeight;
+let canvasHeight = 600;
 let scoreValue = 0;
 let game;
 let gameLevel;
@@ -27,10 +27,10 @@ function gameScreen() {
     //Show Score and Lives
     livesTexts.style.display = 'inline-block';
     scoreTexts.style.display = 'inline-block';
-    
+
     // Show the Canvas element
     canvas.style.display = 'block';
-    
+
     // Start the game / p5 instance
     game = new p5(myp5,canvas);
 }
@@ -96,6 +96,8 @@ function myp5(p) {
             this.gameOver =  false;                                     //Is the game over?
             this.streak = 0;                                            //Score raised without losing lives
             this.streakBonus = 0;
+            this.powerUpCooldown = 90;
+            this.powerUp = new PowerUp(Math.random()*canvasWidth, 30);
         }
 
         update(){
@@ -106,8 +108,8 @@ function myp5(p) {
                 this.background.update(this.streak);
                 
                 //Pass Levels based on Score:
-                if (this.level -1 != Math.floor(this.score/1000)){
-                    this.level = Math.floor(this.score/1000) +1;
+                if (this.level -1 != Math.floor(this.score/1000)){//hastnt staretd yet
+                    this.level = Math.floor(this.score/1000) +1; //it earned enoughs score to go to the next 
                     
                     //At levels 2 and 3, add 2 more obstacles each time
                     if (this.level <= 3){
@@ -132,6 +134,24 @@ function myp5(p) {
                     //Animate Obstacles
                     for (let i=0; i< this.obstCount; i++){
                         this.obstacles[i].animate(this.obstSpeed);
+                    }
+                }
+                
+                if (this.level >= 2){
+                    if (this.powerUp.isSpawned == false){
+                        this.p.text("PowerUp Cooldown"+this.powerUpCooldown,canvasWidth/100,canvasHeight/20);
+                        this.powerUpCooldown = this.powerUpCooldown - 1;
+                        if (this.powerUpCooldown >= 0){
+                            this.powerUp.isSpawned = true;
+                            this.powerUpCooldown = 700;
+                        }
+                        
+                    }
+                    if (this.powerUp.isSpawned == true){
+                        let evaluation = this.powerUp.collisions(this.platform);
+                        this.score += evaluation[0]
+                        this.lives += evaluation[1]
+                        this.powerUp.move()
                     }
                 }
 
@@ -196,7 +216,11 @@ function myp5(p) {
             for (let i=0; i<this.obstacles.length; i++){
                 this.obstacles[i].drawObstacle();
             }
-
+            
+            //Draw PowerUp
+            // if (this.powerUp.isSpawned == true){
+            //     this.powerUp.drawPowerUp()
+            // }
             //Draw Hearts-Lives
             this.drawHearts();
         }
@@ -258,7 +282,7 @@ function myp5(p) {
                     //Constrain the x position so that                                           |{obstacle} middle {obstacle}|
                     //the obstacle doesn't block the middle of the canvas                        ------------------------------
                     if (x <= canvasWidth/2){
-                        x = this.p.constrain(x,20,canvasWidth/2 - this.balls[i].radius - width)
+                        x = this.p.constrain(x,20,canvasWidth/2 - this.balls[i].radius - width);
                     }
                     else{
                         x = this.p.constrain(x,canvasWidth/2 + this.balls[i].radius,canvasWidth);
@@ -361,6 +385,86 @@ function myp5(p) {
             return clouds;
         }
     }
+
+    //** PowerUp *****/
+
+    class PowerUp{
+        constructor(posX,posY,p){
+            this.x = posX;
+            this.y = posY;
+            this.radius = canvasWidth/15;
+            this.gravity = 0.2;
+            this.velocityY = 0;
+            this.isSpawned = false;
+            this.p = p;                                     //p5 Instance pointer to call p5 functions
+        }
+        
+        move(){
+            this.y += this.velocityY;
+            this.velocityY += this.gravity;
+        }
+
+        collisions(platform){
+            //******* Check for platform collision **********
+            
+            let scoreChange = 0;
+            let livesChange = 0;
+            let powerupEdgeBottom = this.y + this.radius;
+            let powerupLeftEdge = this.x - this.radius;
+            let powerupRightEdge = this.x + this.radius;
+
+            let platformLeftEdge = platform.x;
+            let platformRightEdge = platform.x + platform.width;
+            let platformTop = platform.y;
+            let platformBottom = platform.y + platform.height;
+            
+            //Checking if the powerup's bottom is currently touching the platform, or if with current velocity
+            //the powerup will move past the platform, both cases are treated like hitting the platform
+            let powerupBottomIsHit = powerupEdgeBottom >= platformTop && powerupEdgeBottom <= platformBottom;
+            let powerupBottomShouldHit = (powerupEdgeBottom + this.velocityY >= platformBottom && powerupEdgeBottom <= platformTop);
+            let powerupBottomHit = (powerupBottomIsHit || powerupBottomShouldHit);
+
+            //Checking if the powerup is within the platform's width coordinates (= not to its left or right)
+            let powerupSideIsHit = powerupRightEdge >= platformLeftEdge &&
+                                powerupLeftEdge <= platformRightEdge;
+            let powerupSideShouldHit = powerupRightEdge + this.velocityX >= platformLeftEdge &&
+                                    powerupLeftEdge <= platformRightEdge;
+            let powerupInPlatformWidth = powerupSideShouldHit && powerupSideIsHit;
+
+                
+            // IF BALL COLLIDES WITH PLATFORM
+            if (powerupBottomHit && powerupInPlatformWidth){
+
+                //Update level score
+                scoreChange += 3 * SCORE_INCREMENT;
+                this.y = -100;
+                this.velocityY = 0;
+                livesChange = 1;
+                this.isSpawned = false;
+            }
+            
+
+            //if powerup drops below canvas
+            if(this.y>canvasHeight){               
+                this.velocityY = 0;
+                this.y = -100;
+                this.isSpawned = false;
+            }
+
+
+            //Return updated scoreValue;
+            return {scoreChange,livesChange};
+
+        }
+
+        drawPowerUp(){
+            
+            this.p.stroke(50,0,0);
+            this.p.fill(0,200,200);
+            this.p.ellipse(this.x,this.y,this.radius,this.radius+10)
+            
+        }
+    }
     //** Ball Properties *****
 
     class Ball{
@@ -430,7 +534,7 @@ function myp5(p) {
 
             }
 
-            // //Check for obstacle collisions
+            // //Check for obstacle collisions!!!!/
 
             for (let i=0; i<obstacles.length; i++){
 
@@ -467,7 +571,7 @@ function myp5(p) {
             }
 
             //Return updated scoreValue;
-            return {scoreChange,livesChange}
+            return {scoreChange,livesChange};
 
         }
 
@@ -542,7 +646,7 @@ function myp5(p) {
                         normal.y /= magnitude;
                     }
                     
-                    return { collisionPoint, normal }
+                    return { collisionPoint, normal };
                     
                 }
 
@@ -702,7 +806,7 @@ function myp5(p) {
         myCanvas.parent(canvas);
 
         gameLevel = new GameLevel(p.color(150, 200, 230),p);
-    }
+    };
 
     //*****************************************************************
 
@@ -715,8 +819,12 @@ function myp5(p) {
             p.remove();
         }
         
-    }
+    };
 }
+
+
+
+
 
 
 
