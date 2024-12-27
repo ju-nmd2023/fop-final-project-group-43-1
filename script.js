@@ -1,8 +1,9 @@
 const MAX_VELOCITY = 30;
 const CLOUD_COUNT = 5;
 const CLOUD_DETAIL = 4;
-const SCORE_INCREMENT = 150;
+const SCORE_INCREMENT = 500;
 const LIVES = 3;
+const POWERUPCOOLDOWN = 400;
 const canvas = document.getElementById('gameCanvas');
 const score = document.getElementById('scoreValue');
 const lives = document.getElementById('livesCount');
@@ -97,7 +98,7 @@ function myp5(p) {
             this.streak = 0;                                            //Score raised without losing lives
             this.streakBonus = 0;
             this.powerUpCooldown = 90;
-            this.powerUp = new PowerUp(Math.random()*canvasWidth, 30);
+            this.powerUp = new PowerUp(Math.random()*canvasWidth, 30,p);
         }
 
         update(){
@@ -137,20 +138,27 @@ function myp5(p) {
                     }
                 }
                 
+                // Handle PowerUp, at level 2 and onwards
                 if (this.level >= 2){
+                    //If PowerUp is NOT spawned
                     if (this.powerUp.isSpawned == false){
-                        this.p.text("PowerUp Cooldown"+this.powerUpCooldown,canvasWidth/100,canvasHeight/20);
+                        //Reduce its cooldown
                         this.powerUpCooldown = this.powerUpCooldown - 1;
-                        if (this.powerUpCooldown >= 0){
+                        // If cooled down, spawn it and reset cooldown for next respawn
+                        if (this.powerUpCooldown <= 0){
                             this.powerUp.isSpawned = true;
-                            this.powerUpCooldown = 700;
+                            this.powerUpCooldown = POWERUPCOOLDOWN;
                         }
-                        
                     }
+                    // If PowerUp IS spawned
                     if (this.powerUp.isSpawned == true){
-                        let evaluation = this.powerUp.collisions(this.platform);
-                        this.score += evaluation[0]
-                        this.lives += evaluation[1]
+                        // Check whether PowerUp collides with the platform (positive evaluation values)
+                        // or it doesn't or it falls off the canvas (neutral evaluation {0})
+                        let evaluation = this.powerUp.collisions(this.platform);        
+                        this.score += evaluation.scoreChange;                           // Possibly increase score
+                        this.lives += evaluation.livesChange;                           // Possibly increase lives
+                        this.platform.width += evaluation.livesChange * canvasWidth/30; // Possibly increase platform width
+                        // Update its position
                         this.powerUp.move()
                     }
                 }
@@ -203,7 +211,15 @@ function myp5(p) {
             this.p.fill(250,255,50);
             this.p.textSize(30);
             this.p.text("Streak Bonus: "+Math.floor(this.streakBonus*100)+"%",canvasWidth/100,2*canvasHeight/20);
-
+            
+            //Draw PowerUp Cooldown
+            if (this.powerUp.isSpawned == false && this.level >=2){
+                this.p.textSize(15);
+                this.p.stroke(60,20,20);
+                this.p.fill(200,60,60);
+                this.p.text("PowerUp Cooldown: "+this.powerUpCooldown,canvasWidth/100,3*canvasHeight/20);
+            }
+            
             //Draw Platform
             this.platform.drawPlatform();
 
@@ -218,9 +234,9 @@ function myp5(p) {
             }
             
             //Draw PowerUp
-            // if (this.powerUp.isSpawned == true){
-            //     this.powerUp.drawPowerUp()
-            // }
+            if (this.powerUp.isSpawned == true){
+                this.powerUp.drawPowerUp();
+            }
             //Draw Hearts-Lives
             this.drawHearts();
         }
@@ -392,8 +408,8 @@ function myp5(p) {
         constructor(posX,posY,p){
             this.x = posX;
             this.y = posY;
-            this.radius = canvasWidth/15;
-            this.gravity = 0.2;
+            this.radius = canvasWidth/25;
+            this.gravity = 0.1;
             this.velocityY = 0;
             this.isSpawned = false;
             this.p = p;                                     //p5 Instance pointer to call p5 functions
@@ -425,30 +441,29 @@ function myp5(p) {
             let powerupBottomHit = (powerupBottomIsHit || powerupBottomShouldHit);
 
             //Checking if the powerup is within the platform's width coordinates (= not to its left or right)
-            let powerupSideIsHit = powerupRightEdge >= platformLeftEdge &&
+            let powerupInPlatformWidth = powerupRightEdge >= platformLeftEdge &&
                                 powerupLeftEdge <= platformRightEdge;
-            let powerupSideShouldHit = powerupRightEdge + this.velocityX >= platformLeftEdge &&
-                                    powerupLeftEdge <= platformRightEdge;
-            let powerupInPlatformWidth = powerupSideShouldHit && powerupSideIsHit;
 
                 
             // IF BALL COLLIDES WITH PLATFORM
             if (powerupBottomHit && powerupInPlatformWidth){
 
                 //Update level score
-                scoreChange += 3 * SCORE_INCREMENT;
-                this.y = -100;
-                this.velocityY = 0;
-                livesChange = 1;
-                this.isSpawned = false;
+                scoreChange += 3 * SCORE_INCREMENT;     // Add bonus score!
+                livesChange = 1;                        // Add one life
+
+                this.y = -100;                          // Place it outside the canvas
+                this.velocityY = 0;                     // Freeze the PowerUp
+                this.isSpawned = false;                 // Despawn
+                this.x = Math.random() * canvasWidth;   // Randomly reposition for next spawn
             }
-            
 
             //if powerup drops below canvas
             if(this.y>canvasHeight){               
-                this.velocityY = 0;
-                this.y = -100;
-                this.isSpawned = false;
+                this.velocityY = 0;                     // Freeze the PowerUp
+                this.y = -100;                          // Place it outside the canvas
+                this.isSpawned = false;                 // Despawn
+                this.x = Math.random() * canvasWidth;   // Randomly reposition for next spawn
             }
 
 
@@ -460,8 +475,10 @@ function myp5(p) {
         drawPowerUp(){
             
             this.p.stroke(50,0,0);
-            this.p.fill(0,200,200);
-            this.p.ellipse(this.x,this.y,this.radius,this.radius+10)
+            //Flicker color
+            this.p.fill(200+40*Math.sin(this.p.frameCount /5),210+30*Math.sin(this.p.frameCount/7+1),20);
+
+            this.p.ellipse(this.x,this.y,this.radius,this.radius)
             
         }
     }
