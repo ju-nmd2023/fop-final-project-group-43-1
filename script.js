@@ -138,7 +138,7 @@ function myp5(p) {
                     }
                 }
                 
-                // Handle PowerUp, at level 2 and onwards
+                // Handle PowerUp, at level 2 and onwards //
                 if (this.level >= 2){
                     //If PowerUp is NOT spawned
                     if (this.powerUp.isSpawned == false){
@@ -260,7 +260,7 @@ function myp5(p) {
                 this.drawHeart(x, y, heartSize);
             }
         }
-        
+        ///following lines for the heart are help from chat gbt  https://chatgpt.com/share/676e78af-4dcc-8005-a21c-27e82b387a09///
         drawHeart(x, y, size) {
             // Draw a heart shape at the specified position and size
             this.p.fill(255, 0, 0); // Red color
@@ -402,7 +402,7 @@ function myp5(p) {
         }
     }
 
-    //** PowerUp *****/
+    //** PowerUp *****following power up code was some assistance from Rafaela's brother//
 
     class PowerUp{
         constructor(posX,posY,p){
@@ -496,7 +496,7 @@ function myp5(p) {
             this.bounced = false;
             this.p = p;                                     //p5 Instance pointer to call p5 functions
         }
-        
+        //following code was assistance by an acquaintance//
         move(){
             if (Math.abs(this.velocityY) > MAX_VELOCITY){
                 //If velocity exceeds 40 reduce it
@@ -610,6 +610,8 @@ function myp5(p) {
             let obstacleHeight;
             let closestX;
             let closestY;
+
+            //following lines were help from an acquaintance///
 
             if (obstacle instanceof Ball){
                 let ballDistX = Math.abs(this.x +this.velocityX - obstacle.x -obstacle.velocityX);
